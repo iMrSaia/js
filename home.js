@@ -1,34 +1,3 @@
-(function() {
-    'use strict';
-
-    function runHomeLogic() {
-        // استهداف العناصر التي تظهر في صفحتك الرئيسية
-        const elements = document.querySelectorAll('.s-slider-swiper-wrapper, custom-salla-product-card[card-style="coupon"]');
-        
-        if (elements.length === 0) return;
-
-        elements.forEach(el => {
-            if (el.dataset.applied === "true") return;
-            
-            // --- ضع هنا أكوادك البرمجية كاملة ---
-            // مثال:
-            el.style.opacity = "1";
-            // ----------------------------------
-            
-            el.dataset.applied = "true";
-        });
-    }
-
-    // مراقب ذكي (MutationObserver) يمنع الحاجة لتحديث الصفحة
-    // سيلتقط العناصر فور حقنها من قبل سلة
-    const observer = new MutationObserver(() => runHomeLogic());
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    // محاولة تشغيل فورية
-    runHomeLogic();
-})();
-
-
 // إعادة تحديث الأسعار عند الضغط على زر تغيير العملة
 const headerBtn = document.querySelector('.header-buttons button');
 if (headerBtn) {
