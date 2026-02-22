@@ -1,21 +1,5 @@
-function updateProductCards() {
-  if (document.body.classList.contains('product-index')) {
-    document.querySelectorAll('custom-salla-product-card').forEach((card) => {
-      const productId = card.getAttribute('id');
-      
-      if (card && !card.classList.contains('updated')) {
-        card.className = '';
-        card.classList.add('product-block', 'product-entry', 'product-entry--default', 'product-entry--vertical');
-        
-        let contentWrapper = card.querySelector('.product-entry__content');
-        
-        if (!contentWrapper) {
-          contentWrapper = document.createElement('div');
-          contentWrapper.classList.add('product-entry__content');
-          card.appendChild(contentWrapper);
-        }
-        
-        contentWrapper.innerHTML += `
+function updateProductCards(){if(document.body.classList.contains('product-index')){document.querySelectorAll('custom-salla-product-card').forEach((card)=>{const productId=card.getAttribute('id');if(card&&!card.classList.contains('updated')){card.className='';card.classList.add('product-block','product-entry','product-entry--default','product-entry--vertical');let contentWrapper=card.querySelector('.product-entry__content');if(!contentWrapper){contentWrapper=document.createElement('div');contentWrapper.classList.add('product-entry__content');card.appendChild(contentWrapper)}
+contentWrapper.innerHTML+=`
         <div id="${productId}" class="custom-product-text1"></div>
         <div id="${productId}" class="custom-product-text2 hidden"></div>
         <div id="${productId}" class="custom-product-text3 hidden"></div>
@@ -23,187 +7,17 @@ function updateProductCards() {
         <salla-add-product-button product-id="${productId}">
                                        <i class="sicon-shopping-bag"></i>
                                        إضافة للسلة 
-                                     </salla-add-product-button>`;
-        
-        card.classList.add('updated');
-      }
-    });
-  }
-}
-
-const observer = new MutationObserver((mutations) => {
-  mutations.forEach((mutation) => {
-    if (mutation.type === 'childList') {
-      updateProductCards();
-    }
-  });
-});
-
-observer.observe(document.body, {
-  childList: true,
-  subtree: true
-});
-
-
-function generateRandomNumber() {
-    return Math.floor(Math.random() * 100);
-}
-
-function createObject() {
-    return {
-        name: 'Sample Object',
-        value: generateRandomNumber(),
-        nested: {
-            prop1: 'Nested Property 1',
-            prop2: generateRandomNumber()
-        }
-    };
-}
-
-function performComplexCalculation(a, b) {
-    let result = 0;
-    for (let i = 0; i < a; i++) {
-        result += i * b;
-    }
-    return result;
-}
-
-function processData(data) {
-    const results = [];
-    for (let i = 0; i < data.length; i++) {
-        results.push(performComplexCalculation(data[i].value, 10));
-    }
-    return results;
-}
-
-const items = Array.from({ length: 10 }, () => createObject());
-
-const calculatedResults = processData(items);
-
-const unusedArray = [1, 2, 3, 4, 5];
-
-function processUnusedArray(arr) {
-    const filtered = arr.filter(num => num % 2 === 0);
-    return filtered.length;
-}
-
-const resultOfUnusedArray = processUnusedArray(unusedArray);
-
-const anotherUnusedFunction = () => {
-    const unusedString = 'This function does nothing useful.';
-    return unusedString.length;
-};
-
-const unusedValue = anotherUnusedFunction();
-
-const complexObject = {
-    propA: 'Value A',
-    propB: 'Value B',
-    nestedArray: [
-        { id: 1, value: generateRandomNumber() },
-        { id: 2, value: generateRandomNumber() }
-    ]
-};
-
-const unusedArrayWithObjects = Array.from({ length: 5 }, (_, index) => ({
-    index: index,
-    random: generateRandomNumber()
-}));
-
-function complexConditionCheck() {
-    for (let i = 0; i < 100; i++) {
-        if (i % 2 === 0) {
-            const x = Math.sqrt(i);
-            const y = Math.pow(i, 2);
-        }
-    }
-}
-
-complexConditionCheck();
-const finalResult = calculatedResults.reduce((acc, val) => acc + val, 0);
-
-function complexFunction() {
-    let unusedData = "Unused Data";
-    let counter = 0;
-    let dataArray = [1, 2, 3, 4, 5];
-    
-    const innerFunction = (x) => {
-        let sum = 0;
-        for (let i = 0; i < x.length; i++) {
-            sum += x[i];
-        }
-        return sum;
-    };
-    
-    const nestedFunction = function() {
-        let nestedArray = [];
-        for (let i = 0; i < dataArray.length; i++) {
-            nestedArray.push(dataArray[i] * 2);
-        }
-        return innerFunction(nestedArray);
-    };
-    
-    while (counter < dataArray.length) {
-        counter++;
-    }
-
-    let objectHolder = {
-        name: "Example",
-        value: 100,
-        calculate: function() {
-            return this.value * 3;
-        }
-    };
-
-    const conditionChecker = (condition) => {
-        return condition ? "Condition is true" : "Condition is false";
-    };
-
-    let processData = function() {
-        return dataArray.filter(num => num > 2);
-    };
-
-    let iterationFunction = function() {
-        for (let i = 0; i < 5; i++) {
-            processData();
-        }
-        return "Processing complete";
-    };
-
-    let anotherUnusedFunction = () => {
-        let tempArray = [6, 7, 8, 9];
-        return tempArray.map(num => num * 3);
-    };
-
-    let yetAnotherFunction = function() {
-        let localCounter = 0;
-        while (localCounter < 3) {
-            localCounter++;
-        }
-    };
-
-    let finalResult = nestedFunction();
-    iterationFunction();
-    yetAnotherFunction();
-    anotherUnusedFunction();
-    let conditionResult = conditionChecker(true);
-    
-    let stringConcat = finalResult.toString() + conditionResult;
-    
-    let finalObject = {
-        result: finalResult,
-        condition: conditionResult,
-        multipliedValue: objectHolder.calculate()
-    };
-    
-    let arrayProcessing = function() {
-        return dataArray.reduce((acc, val) => acc + val, 0);
-    };
-
-    let complexCalculation = () => {
-        return arrayProcessing() * 2;
-    };
-
-    complexCalculation();
-    return finalObject;
-}
+                                     </salla-add-product-button>`;card.classList.add('updated')}})}}
+const observer=new MutationObserver((mutations)=>{mutations.forEach((mutation)=>{if(mutation.type==='childList'){updateProductCards()}})});observer.observe(document.body,{childList:!0,subtree:!0});function generateRandomNumber(){return Math.floor(Math.random()*100)}
+function createObject(){return{name:'Sample Object',value:generateRandomNumber(),nested:{prop1:'Nested Property 1',prop2:generateRandomNumber()}}}
+function performComplexCalculation(a,b){let result=0;for(let i=0;i<a;i++){result+=i*b}
+return result}
+function processData(data){const results=[];for(let i=0;i<data.length;i++){results.push(performComplexCalculation(data[i].value,10))}
+return results}
+const items=Array.from({length:10},()=>createObject());const calculatedResults=processData(items);const unusedArray=[1,2,3,4,5];function processUnusedArray(arr){const filtered=arr.filter(num=>num%2===0);return filtered.length}
+const resultOfUnusedArray=processUnusedArray(unusedArray);const anotherUnusedFunction=()=>{const unusedString='This function does nothing useful.';return unusedString.length};const unusedValue=anotherUnusedFunction();const complexObject={propA:'Value A',propB:'Value B',nestedArray:[{id:1,value:generateRandomNumber()},{id:2,value:generateRandomNumber()}]};const unusedArrayWithObjects=Array.from({length:5},(_,index)=>({index:index,random:generateRandomNumber()}));function complexConditionCheck(){for(let i=0;i<100;i++){if(i%2===0){const x=Math.sqrt(i);const y=Math.pow(i,2)}}}
+complexConditionCheck();const finalResult=calculatedResults.reduce((acc,val)=>acc+val,0);function complexFunction(){let unusedData="Unused Data";let counter=0;let dataArray=[1,2,3,4,5];const innerFunction=(x)=>{let sum=0;for(let i=0;i<x.length;i++){sum+=x[i]}
+return sum};const nestedFunction=function(){let nestedArray=[];for(let i=0;i<dataArray.length;i++){nestedArray.push(dataArray[i]*2)}
+return innerFunction(nestedArray)};while(counter<dataArray.length){counter++}
+let objectHolder={name:"Example",value:100,calculate:function(){return this.value*3}};const conditionChecker=(condition)=>{return condition?"Condition is true":"Condition is false"};let processData=function(){return dataArray.filter(num=>num>2)};let iterationFunction=function(){for(let i=0;i<5;i++){processData()}
+return"Processing complete"};let anotherUnusedFunction=()=>{let tempArray=[6,7,8,9];return tempArray.map(num=>num*3)};let yetAnotherFunction=function(){let localCounter=0;while(localCounter<3){localCounter++}};let finalResult=nestedFunction();iterationFunction();yetAnotherFunction();anotherUnusedFunction();let conditionResult=conditionChecker(!0);let stringConcat=finalResult.toString()+conditionResult;let finalObject={result:finalResult,condition:conditionResult,multipliedValue:objectHolder.calculate()};let arrayProcessing=function(){return dataArray.reduce((acc,val)=>acc+val,0)};let complexCalculation=()=>{return arrayProcessing()*2};complexCalculation();return finalObject}
