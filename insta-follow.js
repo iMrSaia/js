@@ -2,11 +2,22 @@
     'use strict';
 
     const injectReviews = () => {
-        // 1. التحقق من وجود حاوية التقييمات ومنع التكرار
         const scrollContainer = document.querySelector('salla-infinite-scroll');
         if (!scrollContainer || document.querySelector('.custom-unique-review')) return;
 
-        // 2. تحديث عدادات التقييم العلوية
+        // --- 1. دالة توليد الوقت المنوع (ساعات، أيام، أسابيع، أشهر) ---
+        const getDynamicTime = () => {
+            const timeOptions = [
+                "منذ ساعة", "منذ ساعتين", "منذ 5 ساعات", "منذ 10 ساعات",
+                "منذ يوم", "منذ يومين", "منذ 4 أيام", "منذ 6 أيام",
+                "منذ أسبوع", "منذ أسبوعين", "منذ 3 أسابيع",
+                "منذ شهر", "منذ شهرين", "منذ 3 أشهر"
+            ];
+            // اختيار وقت عشوائي من القائمة
+            return timeOptions[Math.floor(Math.random() * timeOptions.length)];
+        };
+
+        // --- 2. تحديث العدادات ---
         const sallaRating = document.querySelector('salla-rating-stars');
         if (sallaRating) {
             sallaRating.setAttribute('reviews', '210');
@@ -14,32 +25,25 @@
             if (reviewSpan) reviewSpan.innerText = "(210 تقييم)";
         }
 
-        const countSpan = document.querySelector('h2.text-lg span');
-        if (countSpan) countSpan.innerText = "210";
+        const footerTitle = document.querySelector('h2.text-lg.font-bold.opacity-70.mb-8');
+        if (footerTitle) footerTitle.innerText = "210 تعليق";
 
-        // 3. مخزون البيانات (نفس التعليقات والأسماء اللي اخترناها)
+        // --- 3. البيانات (الأسماء والتعليقات) ---
         const comments = [
             "أسرع وأروع خدمة 🌷", "مرره جبار وصلني المتابعين ❣️", "منتج كويس وزياده حلوه", "حبيت رائعين جدًا", "سريعين والله", "المتابعين ماينقصو اشكركم", "افضل متجر والله عميلهم مميز", "الصراحه سعر مقابل جودة", "تنفيذ سرييع ويتجاوبو معاك", "وصلو المتابعين سريع", "افضل متجر للامانه", "انصحكم فيه والله وعن تجربة", "رهيبين الحساب طار متابعينه 🚀", "مصداقية وسرعة الله يبارك لكم", "ثالث مرة أطلب 😍", "المتابعين حقيقيين ولا فيه نقص", "شكراً سايا ستور على الاحترافية", "افضل متجر لزيادة المتابعين", "الخدمة ناررر 🔥", "أنصح فيه وبقوة جودة وسعر", "والله ما قصرتوا بيض الله وجيهكم", "جودة المتابعين ممتازة جداً", "تعامل راقي وسرعة في الإنجاز", "سرني التعامل معكم ومو آخر مرة", "شي فاخر من الآخر 👍", "دعم فني متجاوب وسريع", "كل شي مرتب وسريع", "تطور حسابي بشكل ملحوظ شكراً", "شغل نظيف ومرتب", "كنت متردد بس التجربة اثبتت قوتكم", "سرعة البرق في التنفيذ ⚡", "المصداقية عنوانكم", "الله يرزقكم من واسع فضله", "ممتاز جداً انصح الجميع", "خدمة متميزة وسعر منافس", "تجاوب سريع وعمل احترافي", "تستاهلون عشر نجوم مو بس خمسة", "افضل تجربة شراء خدمات", "متابعين ثابتين وبدون نقص", "دقة في المواعيد وسرعة", "ما توقعت السرعة هذي صراحة", "شكراً لكم من القلب", "مبدعين ومتميزين دائماً", "راقيين في التعامل جداً", "توب التوب ماشاء الله", "الله يوفقكم خدمة بطلة", "انجاز سريع وشغل احترافي", "المتجر المفضل عندي من اليوم", "متجر ثقة وبدون خوف", "جبارين وربي 🔥"
-            // ... يمكنك زيادة التعليقات هنا لتصل لـ 160
         ];
 
-        const mFirst = ["محمد", "فهد", "عبدالله", "خالد", "سلطان", "فيصل", "سعد", "تركي", "بدر", "ماجد", "نايف", "سلمان", "راكان", "مشعل", "طلال", "بندر"];
-        const fFirst = ["نورة", "سارة", "ريم", "هيا", "أروى", "العنود", "شوق", "عبير", "لولوة", "دلال", "غادة", "جواهر", "مشاعل", "لينا", "نوف", "رهف"];
-        const lNames = ["العتيبي", "القحطاني", "الزهراني", "الغامدي", "الحربي", "الشمري", "الدوسري", "المطيري", "الرشيدي", "السبيعي", "الشهري", "عسيري", "المالكي", "العنزي", "الرويلي", "التميمي", "البقمي", "السهلي", "الخالدي"];
-        const times = ["منذ يوم", "منذ يومين", "منذ أسبوع", "منذ شهر"];
+        const mFirst = ["خالد", "عبدالله", "فهد", "سلطان", "فيصل", "محمد", "سعد", "ماجد", "بدر", "تركي", "منصور", "نايف", "سلمان", "راكان", "مشعل", "طلال", "بندر", "نواف", "ثامر", "زياد", "عبدالرحمن", "سعود", "وليد", "ياسر", "حماد"];
+        const fFirst = ["نورة", "سارة", "أمل", "مرام", "هيفاء", "ريم", "العنود", "ليلى", "نجلاء", "غادة", "رهف", "هند", "شروق", "نوف", "مشاعل", "أريج", "لطيفة", "موضي", "دلال", "منى", "خلود", "منيرة", "الجوهرة", "عبير", "أسماء"];
+        const lNames = ["العتيبي", "القحطاني", "الزهراني", "الغامدي", "الحربي", "الشمري", "الدوسري", "المطيري", "الرشيدي", "السبيعي", "الشهري", "عسيري", "المالكي", "العنزي", "الرويلي", "الشهراني", "التميمي", "البقمي", "السهلي", "الخالدي", "الفضلي", "المرهون", "الحازمي", "القرني", "اليامي", "الثبيتي", "السلمي", "الجحدلي", "الصعيدي", "النفيعي", "الصلبي", "الشراري", "البلوي", "العمري", "الأسمري", "الاحمري", "الصبحي", "الذبياني", "اللحياني", "الحويطي", "الشرقي", "المري", "الهاجري", "السعدي", "المحيا", "العرفي", "الجهني", "البارقي", "الزامل", "العمودي"];
 
-        // 4. تجهيز مصفوفة التوزيع (160 نص + 50 نجوم)
         let reviewPool = [];
         for (let i = 0; i < 210; i++) {
-            if (i < 160) {
-                reviewPool.push(comments[i % comments.length]);
-            } else {
-                reviewPool.push("");
-            }
+            reviewPool.push(i < 160 ? comments[i % comments.length] : "");
         }
-        reviewPool = reviewPool.sort(() => Math.random() - 0.5); // خلط عشوائي
+        reviewPool = reviewPool.sort(() => Math.random() - 0.5);
 
-        // 5. حقن التقييمات في الحاوية
+        // --- 4. حقن التقييمات ---
         reviewPool.forEach((commentText) => {
             const isMale = Math.random() > 0.5;
             const fullName = `${isMale ? mFirst[Math.floor(Math.random() * mFirst.length)] : fFirst[Math.floor(Math.random() * fFirst.length)]} ${lNames[Math.floor(Math.random() * lNames.length)]}`;
@@ -58,9 +62,9 @@
                                         <span class="fix-align text-sm opacity-80">قام بالشراء</span>
                                     </div>
                                 </div>
-                                <p class="opacity-70 text-sm">${times[Math.floor(Math.random() * times.length)]}</p>
+                                <p class="opacity-70 text-sm">${getDynamicTime()}</p>
                                 <div class="w-full comment__rating text-xs mb-2.5 rtl:space-x-reverse space-x-1" style="color: #fbbf24;">
-                                    <i class="sicon-star2"></i><i class="sicon-star2"></i><i class="sicon-star2"></i><i class="sicon-star2"></i><i class="sicon-star2"></i>
+                                    <i class="sicon-star2 inline-block text-amber-400"></i><i class="sicon-star2 inline-block text-amber-400"></i><i class="sicon-star2 inline-block text-amber-400"></i><i class="sicon-star2 inline-block text-amber-400"></i><i class="sicon-star2 inline-block text-amber-400"></i>
                                 </div>
                             </div>
                             ${commentText ? `<div class="prose prose-sm max-w-none opacity-70"><p>${commentText}</p></div>` : ''}
@@ -71,7 +75,6 @@
         });
     };
 
-    // التشغيل عند التحميل وعند أي تغيير في الصفحة (لضمان الحقن في الـ Infinite Scroll)
     window.addEventListener('load', injectReviews);
     const observer = new MutationObserver(injectReviews);
     observer.observe(document.body, { childList: true, subtree: true });
