@@ -5,7 +5,12 @@
         const scrollContainer = document.querySelector('salla-infinite-scroll');
         if (!scrollContainer || document.querySelector('.custom-unique-review')) return;
 
-        // --- 1. دالة توليد الوقت المنوع ---
+        // --- إعدادات العرض التدريجي ---
+        const totalReviewsCount = 88;
+        const perPage = 5; 
+        let currentIndex = 0;
+
+        // --- 1. دالة توليد الوقت المنوع (كودك الأصلي) ---
         const getDynamicTime = () => {
             const timeOptions = [
                 "منذ ساعة", "منذ ساعتين", "منذ 8 ساعات", "منذ يوم", 
@@ -15,46 +20,43 @@
             return timeOptions[Math.floor(Math.random() * timeOptions.length)];
         };
 
-        // --- 2. تحديث العدادات (88 تقييم) ---
+        // --- 2. تحديث العدادات (كودك الأصلي) ---
         const sallaRating = document.querySelector('salla-rating-stars');
         if (sallaRating) {
-            sallaRating.setAttribute('reviews', '88');
+            sallaRating.setAttribute('reviews', totalReviewsCount.toString());
             const reviewSpan = sallaRating.querySelector('.s-rating-stars-reviews');
-            if (reviewSpan) reviewSpan.innerText = "(88 تقييم)";
+            if (reviewSpan) reviewSpan.innerText = `(${totalReviewsCount} تقييم)`;
         }
-
         const footerTitle = document.querySelector('h2.text-lg.font-bold.opacity-70.mb-8');
-        if (footerTitle) footerTitle.innerText = "88 تعليق";
+        if (footerTitle) footerTitle.innerText = `${totalReviewsCount} تعليق`;
 
-        // --- 3. البيانات الجديدة (60 تعليق مخصص للمشاهدات) ---
+        // --- 3. البيانات والأسماء (كودك الأصلي) ---
         const comments = [
-            "المشاهدات وصلت في ثواني"، "ثبات مو طبيعي ما نقصت ولا مشاهدة", "انصحكم فيه لرفع الاكسبلور", "سرعة البرق ما شاء الله", "جودة المشاهدات توب"، "افضل متجر للمشاهدات"، "فرق معي التفاعل بعد المشاهدات", "ثقة وسرعة وأمانة", "مو آخر تعامل بإذن الله", "المشاهدات حقيقية وتبيض الوجه",
+            "المشاهدات وصلت في ثواني", "ثبات مو طبيعي ما نقصت ولا مشاهدة", "انصحكم فيه لرفع الاكسبلور", "سرعة البرق ما شاء الله", "جودة المشاهدات توب", "افضل متجر للمشاهدات", "فرق معي التفاعل بعد المشاهدات", "ثقة وسرعة وأمانة", "مو آخر تعامل بإذن الله", "المشاهدات حقيقية وتبيض الوجه",
             "رهيبين وسريعين جداً", "أطلق خدمة مشاهدات جربتها", "السعر يابلاش والخدمة نار", "شكراً سايا ستور على المصداقية", "المشاهدات ثابتة 100%", "تنفذ الطلب بلمح البصر", "دعم فني بطل وسريع", "كل شي تمام والعدد وصل كامل", "رفع لي الريلز اكسبلور فوراً", "ممتازين ومبدعين كالعادة",
             "خدمة احترافية جداً", "ولا غلطة الله يبارك لكم", "انصح وبقوة للي يبي تفاعل", "جودة وسعر وسرعة خرافية", "المشاهدات ما تنقص أبداً", "تجربة ممتازة وراح اكررها", "افضل متجر خدمات في السعودية", "سرعة الرد والتنفيذ مذهلة", "المشاهدات خلت حسابي ينفجر", "بيض الله وجيهكم",
             "ما توقعت السرعة هذي صراحة", "خدمة ترفع الراس كفو", "المصداقية عنوانكم دائماً", "المشاهدات وصلت وزيادة شوي", "شغل مرتب ونظيف", "تستاهلون التقييم الكامل", "سريعين في الانجاز والله", "المشاهدات ثابتة من اسبوع", "افضل استثمار للحساب", "الخدمة 10 من 10",
             "الله يسعدكم المشاهدات وصلت", "سرعة خيالية ما كملت دقيقة", "جودة عالية جداً انصحكم", "فرق كبير في المشاهدات واللايكات", "أهنيكم على هالمستوى", "كل شي واضح وسهل", "المشاهدات حقيقية وتفاعل بطل", "شكراً على التعامل الراقي", "مبدعين دائماً وابداً", "المتجر رقم واحد عندي",
-            "سرعة تنفيذ لا توصف"، "خدمة مميزة جداً ومضمونة"، "المشاهدات ساعدتني في الانتشار", "الله يوفقكم ويرزقكم", "انصح الكل يتعامل معهم", "شغل ذمة وضمير", "المشاهدات جودتها ممتازة", "سريع جداً في الدفع والتنفيذ", "تطور حسابي بفضلكم", "افضل تجربة شراء مشاهدات"
+            "سرعة تنفيذ لا توصف", "خدمة مميزة جداً ومضمونة", "المشاهدات ساعدتني في الانتشار", "الله يوفقكم ويرزقكم", "انصح الكل يتعامل معهم", "شغل ذمة وضمير", "المشاهدات جودتها ممتازة", "سريع جداً في الدفع والتنفيذ", "تطور حسابي بفضلكم", "افضل تجربة شراء مشاهدات"
         ];
 
-        // أسماء مختلفة (تركيز على أسماء خليجية ومنوعة)
         const mFirst = ["يوسف", "علي", "أحمد", "إبراهيم", "حسين", "عمر", "زايد", "حمد", "سيف", "راشد", "فارس", "حسن", "عادل", "صالح", "مبارك", "فهد"];
         const fFirst = ["فاطمة", "شيخة", "مريم", "عائشة", "شما", "هناء", "العنود", "هيا", "موضي", "نورة", "سحر", "أحلام", "منى", "حصة", "نجود", "بشاير"];
         const lNames = ["المري", "الهاجري", "السعدي", "الرشيدي", "البلوشي", "الزدجالي", "التميمي", "الخالدي", "الشمري", "الدوسري", "المالكي", "الحارثي", "الفيفي", "العمري", "الأسمري"];
 
-        // تجهيز التوزيع (60 نص + 28 نجوم = 88 إجمالي)
         let reviewPool = [];
-        for (let i = 0; i < 88; i++) {
+        for (let i = 0; i < totalReviewsCount; i++) {
             reviewPool.push(i < 60 ? comments[i % comments.length] : "");
         }
         reviewPool = reviewPool.sort(() => Math.random() - 0.5);
 
-        // --- 4. حقن التقييمات ---
-        reviewPool.forEach((commentText) => {
+        // تحويل البيانات إلى مصفوفة HTML
+        const allReviewsHtml = reviewPool.map((commentText) => {
             const isMale = Math.random() > 0.5;
             const fullName = `${isMale ? mFirst[Math.floor(Math.random() * mFirst.length)] : fFirst[Math.floor(Math.random() * fFirst.length)]} ${lNames[Math.floor(Math.random() * lNames.length)]}`;
             const avatar = isMale ? "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_male.png" : "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_female.png";
             
-            const reviewHtml = `
+            return `
                 <div class="border-b last:border-0 mb-8 pb-8 last:pb-0 border-gray-200 dark:border-white/10 list-block custom-review custom-unique-review">
                     <div class="comment flex text-sm rtl:space-x-reverse space-x-3 text-right" style="direction: rtl;">
                         <div class="flex-none"><img src="${avatar}" alt="${fullName}" class="w-10 h-10 object-cover rounded-full"></div>
@@ -76,8 +78,51 @@
                         </div>
                     </div>
                 </div>`;
-            scrollContainer.insertAdjacentHTML('beforeend', reviewHtml);
         });
+
+        // --- 4. دالة الحقن التدريجي (5 في كل مرة) ---
+        const loadMoreReviews = () => {
+            const nextBatch = allReviewsHtml.slice(currentIndex, currentIndex + perPage);
+            nextBatch.forEach(html => scrollContainer.insertAdjacentHTML('beforeend', html));
+            currentIndex += perPage;
+
+            if (currentIndex >= allReviewsHtml.length) {
+                const wrapper = document.querySelector('.custom-load-more-wrapper');
+                if (wrapper) wrapper.style.display = 'none';
+            }
+        };
+
+        // عرض أول 5 عند التحميل
+        loadMoreReviews();
+
+        // --- 5. إضافة زر "تحميل المزيد" المتوافق مع الهوية ---
+        if (allReviewsHtml.length > perPage) {
+            const wrapper = document.createElement('div');
+            wrapper.className = "s-infinite-scroll-wrapper custom-load-more-wrapper";
+            wrapper.innerHTML = `
+                <a href="javascript:void(0)" class="s-infinite-scroll-btn s-button-btn s-button-primary" id="trigger-load-more">
+                    <span class="s-button-text s-infinite-scroll-btn-text">تحميل المزيد</span>
+                    <span class="s-button-loader s-button-loader-center s-infinite-scroll-btn-loader" id="custom-loader" style="display: none"></span>
+                </a>`;
+            
+            scrollContainer.after(wrapper);
+
+            const btn = document.getElementById('trigger-load-more');
+            const loader = document.getElementById('custom-loader');
+            const btnText = btn.querySelector('.s-button-text');
+
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                btnText.style.display = 'none';
+                loader.style.display = 'inline-block';
+
+                setTimeout(() => {
+                    loadMoreReviews();
+                    btnText.style.display = 'inline-block';
+                    loader.style.display = 'none';
+                }, 800);
+            });
+        }
     };
 
     window.addEventListener('load', injectReviews);
