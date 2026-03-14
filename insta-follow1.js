@@ -5,7 +5,12 @@
         const scrollContainer = document.querySelector('salla-infinite-scroll');
         if (!scrollContainer || document.querySelector('.custom-unique-review')) return;
 
-        // --- 1. دالة توليد الوقت المنوع (ساعات، أيام، أسابيع، أشهر) ---
+        // --- إعدادات العرض التدريجي ---
+        const totalReviewsCount = 210;
+        const perPage = 5; 
+        let currentIndex = 0;
+
+        // --- 1. دالة توليد الوقت المنوع (كودك الأصلي) ---
         const getDynamicTime = () => {
             const timeOptions = [
                 "منذ ساعة", "منذ ساعتين", "منذ 5 ساعات", "منذ 10 ساعات",
@@ -13,22 +18,20 @@
                 "منذ أسبوع", "منذ أسبوعين", "منذ 3 أسابيع",
                 "منذ شهر", "منذ شهرين", "منذ 3 أشهر"
             ];
-            // اختيار وقت عشوائي من القائمة
             return timeOptions[Math.floor(Math.random() * timeOptions.length)];
         };
 
-        // --- 2. تحديث العدادات ---
+        // --- 2. تحديث العدادات (كودك الأصلي) ---
         const sallaRating = document.querySelector('salla-rating-stars');
         if (sallaRating) {
-            sallaRating.setAttribute('reviews', '210');
+            sallaRating.setAttribute('reviews', totalReviewsCount.toString());
             const reviewSpan = sallaRating.querySelector('.s-rating-stars-reviews');
-            if (reviewSpan) reviewSpan.innerText = "(210 تقييم)";
+            if (reviewSpan) reviewSpan.innerText = `(${totalReviewsCount} تقييم)`;
         }
-
         const footerTitle = document.querySelector('h2.text-lg.font-bold.opacity-70.mb-8');
-        if (footerTitle) footerTitle.innerText = "210 تعليق";
+        if (footerTitle) footerTitle.innerText = `${totalReviewsCount} تعليق`;
 
-        // --- 3. البيانات (الأسماء والتعليقات) ---
+        // --- 3. البيانات (كودك الأصلي) ---
         const comments = [
             "أسرع وأروع خدمة 🌷", "مرره جبار وصلني المتابعين ❣️", "منتج كويس وزياده حلوه", "حبيت رائعين جدًا", "سريعين والله", "المتابعين ماينقصو اشكركم", "افضل متجر والله عميلهم مميز", "الصراحه سعر مقابل جودة", "تنفيذ سرييع ويتجاوبو معاك", "وصلو المتابعين سريع", "افضل متجر للامانه", "انصحكم فيه والله وعن تجربة", "رهيبين الحساب طار متابعينه 🚀", "مصداقية وسرعة الله يبارك لكم", "ثالث مرة أطلب 😍", "المتابعين حقيقيين ولا فيه نقص", "شكراً سايا ستور على الاحترافية", "افضل متجر لزيادة المتابعين", "الخدمة ناررر 🔥", "أنصح فيه وبقوة جودة وسعر", "والله ما قصرتوا بيض الله وجيهكم", "جودة المتابعين ممتازة جداً", "تعامل راقي وسرعة في الإنجاز", "سرني التعامل معكم ومو آخر مرة", "شي فاخر من الآخر 👍", "دعم فني متجاوب وسريع", "كل شي مرتب وسريع", "تطور حسابي بشكل ملحوظ شكراً", "شغل نظيف ومرتب", "كنت متردد بس التجربة اثبتت قوتكم", "سرعة البرق في التنفيذ ⚡", "المصداقية عنوانكم", "الله يرزقكم من واسع فضله", "ممتاز جداً انصح الجميع", "خدمة متميزة وسعر منافس", "تجاوب سريع وعمل احترافي", "تستاهلون عشر نجوم مو بس خمسة", "افضل تجربة شراء خدمات", "متابعين ثابتين وبدون نقص", "دقة في المواعيد وسرعة", "ما توقعت السرعة هذي صراحة", "شكراً لكم من القلب", "مبدعين ومتميزين دائماً", "راقيين في التعامل جداً", "توب التوب ماشاء الله", "الله يوفقكم خدمة بطلة", "انجاز سريع وشغل احترافي", "المتجر المفضل عندي من اليوم", "متجر ثقة وبدون خوف", "جبارين وربي 🔥"
         ];
@@ -38,18 +41,18 @@
         const lNames = ["العتيبي", "القحطاني", "الزهراني", "الغامدي", "الحربي", "الشمري", "الدوسري", "المطيري", "الرشيدي", "السبيعي", "الشهري", "عسيري", "المالكي", "العنزي", "الرويلي", "الشهراني", "التميمي", "البقمي", "السهلي", "الخالدي", "الفضلي", "المرهون", "الحازمي", "القرني", "اليامي", "الثبيتي", "السلمي", "الجحدلي", "الصعيدي", "النفيعي", "الصلبي", "الشراري", "البلوي", "العمري", "الأسمري", "الاحمري", "الصبحي", "الذبياني", "اللحياني", "الحويطي", "الشرقي", "المري", "الهاجري", "السعدي", "المحيا", "العرفي", "الجهني", "البارقي", "الزامل", "العمودي"];
 
         let reviewPool = [];
-        for (let i = 0; i < 210; i++) {
+        for (let i = 0; i < totalReviewsCount; i++) {
             reviewPool.push(i < 160 ? comments[i % comments.length] : "");
         }
         reviewPool = reviewPool.sort(() => Math.random() - 0.5);
 
-        // --- 4. حقن التقييمات ---
-        reviewPool.forEach((commentText) => {
+        // تحويل البيانات إلى مصفوفة HTML
+        const allReviewsHtml = reviewPool.map((commentText) => {
             const isMale = Math.random() > 0.5;
             const fullName = `${isMale ? mFirst[Math.floor(Math.random() * mFirst.length)] : fFirst[Math.floor(Math.random() * fFirst.length)]} ${lNames[Math.floor(Math.random() * lNames.length)]}`;
             const avatar = isMale ? "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_male.png" : "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_female.png";
             
-            const reviewHtml = `
+            return `
                 <div class="border-b last:border-0 mb-8 pb-8 last:pb-0 border-gray-200 dark:border-white/10 list-block custom-review custom-unique-review">
                     <div class="comment flex text-sm rtl:space-x-reverse space-x-3 text-right" style="direction: rtl;">
                         <div class="flex-none"><img src="${avatar}" alt="${fullName}" class="w-10 h-10 object-cover rounded-full"></div>
@@ -71,8 +74,52 @@
                         </div>
                     </div>
                 </div>`;
-            scrollContainer.insertAdjacentHTML('beforeend', reviewHtml);
         });
+
+        // --- 4. دالة الحقن التدريجي (5 في كل مرة) ---
+        const loadMoreReviews = () => {
+            const nextBatch = allReviewsHtml.slice(currentIndex, currentIndex + perPage);
+            nextBatch.forEach(html => scrollContainer.insertAdjacentHTML('beforeend', html));
+            currentIndex += perPage;
+
+            // إخفاء الزر إذا انتهت كل التقييمات
+            if (currentIndex >= allReviewsHtml.length) {
+                const wrapper = document.querySelector('.custom-load-more-wrapper');
+                if (wrapper) wrapper.style.display = 'none';
+            }
+        };
+
+        // حقن أول 5 عند تحميل الصفحة
+        loadMoreReviews();
+
+        // --- 5. إضافة زر "تحميل المزيد" مع اللودر ---
+        if (allReviewsHtml.length > perPage) {
+            const wrapper = document.createElement('div');
+            wrapper.className = "s-infinite-scroll-wrapper custom-load-more-wrapper";
+            wrapper.innerHTML = `
+                <a href="javascript:void(0)" class="s-infinite-scroll-btn s-button-btn s-button-primary" id="trigger-load-more">
+                    <span class="s-button-text s-infinite-scroll-btn-text">تحميل المزيد</span>
+                    <span class="s-button-loader s-button-loader-center s-infinite-scroll-btn-loader" id="custom-loader" style="display: none"></span>
+                </a>`;
+            
+            scrollContainer.after(wrapper);
+
+            const btn = document.getElementById('trigger-load-more');
+            const loader = document.getElementById('custom-loader');
+            const btnText = btn.querySelector('.s-button-text');
+
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                btnText.style.display = 'none';
+                loader.style.display = 'inline-block';
+
+                setTimeout(() => {
+                    loadMoreReviews();
+                    btnText.style.display = 'inline-block';
+                    loader.style.display = 'none';
+                }, 800); // سرعة اللودر
+            });
+        }
     };
 
     window.addEventListener('load', injectReviews);
