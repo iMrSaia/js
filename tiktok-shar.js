@@ -5,9 +5,11 @@
         const scrollContainer = document.querySelector('salla-infinite-scroll');
         if (!scrollContainer || document.querySelector('.custom-unique-review')) return;
 
-        // --- 1. العدادات (183) ---
+        // --- 1. الإعدادات ---
         const totalReviews = 183;
-        const initialShow = 5; // عدد التعليقات الأولية
+        const perPage = 5; // عدد التقييمات في كل ضغطة
+        let currentIndex = 0;
+
         const sallaRating = document.querySelector('salla-rating-stars');
         if (sallaRating) {
             sallaRating.setAttribute('reviews', totalReviews.toString());
@@ -17,7 +19,7 @@
         const footerTitle = document.querySelector('h2.text-lg.font-bold.opacity-70.mb-8');
         if (footerTitle) footerTitle.innerText = `${totalReviews} تعليق`;
 
-        // --- 2. الأسماء والبيانات (كودك الأصلي كما هو) ---
+        // --- 2. البيانات (كودك الأصلي) ---
         const mFirst = ["مشعل", "طلال", "بندر", "نواف", "ثامر", "زياد", "سعود", "وليد", "ياسر", "حماد", "أحمد", "إبراهيم", "يوسف", "علي", "عمر", "صالح", "خليل", "ناصر", "ياسين", "طه"];
         const fFirst = ["نورة", "سارة", "أمل", "مرام", "هيفاء", "ريم", "العنود", "ليلى", "نجلاء", "غادة", "رهف", "هند", "شروق", "نوف", "مشاعل", "أريج", "لطيفة", "موضي"];
         const lNames = ["الرشيد", "السديري", "الزايد", "الفهد", "العمير", "الخليفي", "الجبر", "المنصور", "الناصر", "العبدلي", "المهنا", "السعيد", "الصالح", "الحميد", "الشايع", "الجارالله", "العقيلي", "السالم", "المطلق", "الحبيب"];
@@ -34,7 +36,7 @@
             return timeOptions[Math.floor(Math.random() * timeOptions.length)];
         };
 
-        // --- 3. توليد جميع التعليقات وتخزينها في مصفوفة ---
+        // --- 3. توليد جميع التقييمات مسبقاً ---
         let allReviews = [];
         for (let i = 0; i < totalReviews; i++) {
             const isMale = Math.random() > 0.5;
@@ -44,7 +46,7 @@
             const avatar = isMale ? "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_male.png" : "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_female.png";
             const commentText = i < 150 ? generateSmartComment() : "";
             
-            const reviewHtml = `
+            const html = `
                 <div class="border-b last:border-0 mb-8 pb-8 last:pb-0 border-gray-200 dark:border-white/10 list-block custom-review custom-unique-review">
                     <div class="comment flex text-sm rtl:space-x-reverse space-x-3 text-right" style="direction: rtl;">
                         <div class="flex-none"><img src="${avatar}" alt="${fullName}" class="w-10 h-10 object-cover rounded-full"></div>
@@ -66,20 +68,31 @@
                         </div>
                     </div>
                 </div>`;
-            allReviews.push(reviewHtml);
+            allReviews.push(html);
         }
 
-        // --- 4. حقن أول 5 تعليقات ---
-        allReviews.slice(0, initialShow).forEach(html => scrollContainer.insertAdjacentHTML('beforeend', html));
+        // --- 4. دالة الحقن التدريجي ---
+        const loadMoreReviews = () => {
+            const nextBatch = allReviews.slice(currentIndex, currentIndex + perPage);
+            nextBatch.forEach(html => scrollContainer.insertAdjacentHTML('beforeend', html));
+            currentIndex += perPage;
 
-        // --- 5. إضافة زر "تحميل المزيد" بنفس كودك ---
-        if (totalReviews > initialShow) {
+            // إخفاء الزر إذا انتهت كل التقييمات
+            if (currentIndex >= totalReviews) {
+                if (document.querySelector('.custom-load-more-wrapper')) {
+                    document.querySelector('.custom-load-more-wrapper').style.display = 'none';
+                }
+            }
+        };
+
+        // حقن أول 5 عند التحميل
+        loadMoreReviews();
+
+        // --- 5. إضافة الزر والتحكم فيه ---
+        if (totalReviews > perPage) {
             const wrapper = document.createElement('div');
             wrapper.className = "s-infinite-scroll-wrapper custom-load-more-wrapper";
             wrapper.innerHTML = `
-                <div class="s-infinite-scroll-status" style="display:none">
-                    <p class="s-infinite-scroll-error infinite-scroll-error">تعذر جلب المزيد😢</p>
-                </div>
                 <a href="javascript:void(0)" class="s-infinite-scroll-btn s-button-btn s-button-primary" id="trigger-load-more">
                     <span class="s-button-text s-infinite-scroll-btn-text">تحميل المزيد</span>
                     <span class="s-button-loader s-button-loader-center s-infinite-scroll-btn-loader" id="custom-loader" style="display: none"></span>
@@ -87,7 +100,6 @@
             
             scrollContainer.after(wrapper);
 
-            // منطق الضغط واللودر
             const btn = document.getElementById('trigger-load-more');
             const loader = document.getElementById('custom-loader');
             const btnText = btn.querySelector('.s-button-text');
@@ -98,10 +110,10 @@
                 loader.style.display = 'inline-block';
 
                 setTimeout(() => {
-                    // حقن باقي الـ 178 تعليق
-                    allReviews.slice(initialShow).forEach(html => scrollContainer.insertAdjacentHTML('beforeend', html));
-                    wrapper.style.display = 'none'; // إخفاء الزر بعد التحميل
-                }, 1000);
+                    loadMoreReviews(); // جلب الـ 5 التالية
+                    btnText.style.display = 'inline-block';
+                    loader.style.display = 'none';
+                }, 800); // سرعة اللودر (0.8 ثانية)
             });
         }
     };
