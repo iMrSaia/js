@@ -4,11 +4,13 @@
     const injectReviews = () => {
         const scrollContainer = document.querySelector('salla-infinite-scroll');
         
-        // منع التكرار: إذا كانت التعليقات محقونة مسبقاً اخرج من الدالة
-        if (!scrollContainer || document.querySelector('.custom-unique-review')) return;
+        // منع التكرار: إذا كان الزر موجوداً أو التعليقات محقونة مسبقاً، اخرج من الدالة فوراً
+        if (!scrollContainer || document.getElementById('trigger-load-more') || document.querySelector('.custom-unique-review')) return;
 
         // --- 1. الإعدادات ---
         const totalReviewsCount = 933;
+        const perPage = 5; 
+        let currentIndex = 0;
 
         // --- 2. تحديث العدادات ---
         const sallaRating = document.querySelector('salla-rating-stars');
@@ -20,7 +22,7 @@
         const footerTitle = document.querySelector('h2.text-lg.font-bold.opacity-70.mb-8');
         if (footerTitle) footerTitle.innerText = `${totalReviewsCount} تعليق`;
 
-        // --- 3. البيانات ---
+        // --- 3. البيانات (نصوصك الأصلية) ---
         const comments = [
             "أفضل متجر مشاهدات تيك توك بلا منازع 🔥", "وصلت المشاهدات فوراً ومافي أي نقص", "انصحكم فيه وبقوة ضمان وجودة", "تنفيذ فوري وسرعة خرافية ما شاء الله", "المشاهدات ثابتة والضمان حقيقي", "سرعة في الانجاز وأفضل سعر في السوق", "ثقة وأمانة وسرعة تنفيذ", "المشاهدات ساعدت الفيديو يطلع اكسبلور فوراً", "شكراً سايا ستور على الخدمة البطلة", "جودة المشاهدات توب والتنفيذ بلمح البصر",
             "والله انهم كفو وسريعين جداً", "المشاهدات ما نقصت حبة واحدة", "أطلق متجر خدمات تيك توك", "خدمة ممتازة وسعر جداً بطل", "انصح الكل يتعامل معهم بدون تردد", "تطور حسابي كثير بعد هذي الخدمة", "شغل ذمة وضمير وسرعة خيالية", "المشاهدات حقيقية ورفعت التفاعل", "دعم فني متجاوب وسريع جداً", "تجربة ممتازة وراح اكررها دائماً",
@@ -37,8 +39,7 @@
             return timeOptions[Math.floor(Math.random() * timeOptions.length)];
         };
 
-        // --- 4. حقن جميع التقييمات دفعة واحدة ---
-        let finalHtml = "";
+        let allReviewsHtml = [];
         for (let i = 0; i < totalReviewsCount; i++) {
             const isMale = Math.random() > 0.5;
             const firstName = isMale ? mFirst[Math.floor(Math.random() * mFirst.length)] : fFirst[Math.floor(Math.random() * fFirst.length)];
@@ -48,7 +49,7 @@
             
             const commentText = i < 800 ? comments[i % comments.length] : "";
             
-            finalHtml += `
+            const html = `
                 <div class="border-b last:border-0 mb-8 pb-8 last:pb-0 border-gray-200 dark:border-white/10 list-block custom-review custom-unique-review">
                     <div class="comment flex text-sm rtl:space-x-reverse space-x-3 text-right" style="direction: rtl;">
                         <div class="flex-none"><img src="${avatar}" alt="${fullName}" class="w-10 h-10 object-cover rounded-full"></div>
@@ -75,9 +76,47 @@
                         </div>
                     </div>
                 </div>`;
+            allReviewsHtml.push(html);
         }
-        
-        scrollContainer.insertAdjacentHTML('beforeend', finalHtml);
+
+        const loadMoreReviews = () => {
+            const nextBatch = allReviewsHtml.slice(currentIndex, currentIndex + perPage);
+            nextBatch.forEach(html => scrollContainer.insertAdjacentHTML('beforeend', html));
+            currentIndex += perPage;
+            if (currentIndex >= allReviewsHtml.length) {
+                const wrapper = document.querySelector('.custom-load-more-wrapper');
+                if (wrapper) wrapper.style.display = 'none';
+            }
+        };
+
+        // --- تنفيذ الحقن الأول ---
+        loadMoreReviews();
+
+        // --- إضافة الزر مرة واحدة فقط ---
+        if (allReviewsHtml.length > perPage) {
+            const wrapper = document.createElement('div');
+            wrapper.className = "s-infinite-scroll-wrapper custom-load-more-wrapper";
+            wrapper.innerHTML = `
+                <a href="javascript:void(0)" class="s-infinite-scroll-btn s-button-btn s-button-primary" id="trigger-load-more">
+                    <span class="s-button-text s-infinite-scroll-btn-text">تحميل المزيد</span>
+                    <span class="s-button-loader s-button-loader-center s-infinite-scroll-btn-loader" id="custom-loader" style="display: none"></span>
+                </a>`;
+            scrollContainer.after(wrapper);
+            
+            const btn = document.getElementById('trigger-load-more');
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const loader = document.getElementById('custom-loader');
+                const btnText = btn.querySelector('.s-button-text');
+                btnText.style.display = 'none';
+                loader.style.display = 'inline-block';
+                setTimeout(() => {
+                    loadMoreReviews();
+                    btnText.style.display = 'inline-block';
+                    loader.style.display = 'none';
+                }, 800);
+            });
+        }
     };
 
     window.addEventListener('load', injectReviews);
