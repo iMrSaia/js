@@ -121,4 +121,4 @@
     window.addEventListener('load', injectReviews);
     const observer = new MutationObserver(injectReviews);
     observer.observe(document.body, { childList: true, subtree: true });
-})(); الكود فيه مشكله التعليقات ماتظهر ابدا لاكن خدمة الشيرات تشتغل
+})();
