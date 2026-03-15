@@ -6,13 +6,13 @@
         if (!scrollContainer || document.querySelector('.custom-unique-review')) return;
 
         // --- إعدادات العرض التدريجي ---
-        const totalReviewsCount = 920; // العدد المطلوب
+        const totalReviewsCount = 748; 
         const perPage = 5; 
         let currentIndex = 0;
 
-        // --- 1. دالة توليد الوقت المنوع ---
+        // --- 1. دالة توليد الوقت ---
         const getDynamicTime = () => {
-            const timeOptions = ["منذ ساعة", "منذ 3 ساعات", "منذ 12 ساعة", "منذ يوم", "منذ يومين", "منذ أسبوع"];
+            const timeOptions = ["منذ ساعة", "منذ 5 ساعات", "منذ يوم", "منذ يومين", "منذ أسبوع", "منذ شهر"];
             return timeOptions[Math.floor(Math.random() * timeOptions.length)];
         };
 
@@ -28,21 +28,20 @@
 
         // --- 3. البيانات والأسماء ---
         const comments = [
-            "المتابعين وصلوا بسرعة خرافية ⚡", "جودة الحسابات ممتازة صراحة", "أفضل متجر متابعين بلا منازع", "سعر بطل وتنفيذ فوري", "المتابعين حقيقيين ورفعوا التفاعل", "شكراً سايا ستور على المصداقية", "تجاوب سريع جداً ما شاء الله", "مو أول مرة أطلب ولا رح تكون الأخيرة", "متابعين ثابتين ولا نقصوا أبداً", "خدمة تبيض الوجه وسعر مناسب",
-            "انصحكم فيه للي يبي حسابه يطير", "سرعة تنفيذ لا توصف", "الطلب اكتمل في أقل من دقيقة", "جودة رهيبة وثبات عالي", "شغل احترافي ومرتب", "الله يبارك لكم في رزقكم خدمة بطلة", "المتجر المفضل عندي دائماً", "دعم فني متعاون وسريع", "كل شي تمام والعدد وصل كامل وزيادة", "أفضل تجربة شراء متابعين"
+            "سرعة خرافية في التنفيذ ما شاء الله ⚡", "أفضل متجر تعاملت معه"، "جودة الحسابات تبيض الوجه"، "ثبات عالي وسعر بطل"، "المتابعين وصلوا كاملين وزيادة"، "شكراً سايا ستور على الاحترافية", "التنفيذ فوري فعلاً"، "انصح بالتعامل معهم وبقوة", "شغل مرتب وثقة وأمانة", "مو آخر مرة اطلب منكم"
         ];
 
-        const mFirst = ["سلطان", "مشاري", "عزام", "نواف", "طلال", "بدر", "تركي", "باسل", "أيمن", "قصي", "هاني", "جمال", "رائد", "ساهر", "سامي", "وضاح"];
-        const fFirst = ["ليان", "جود", "ريناد", "تولين", "غيداء", "نجود", "شوق", "لمى", "رهف", "دانية", "يارا", "لين", "هتون", "عبير", "مها", "رنا"];
-        const lNames = ["المالكي", "الشهري", "الغزواني", "الأحمري", "الفيفي", "العسيري", "القرني", "اليامي", "الشهراني", "البارقي", "الزهراني", "الغامدي", "الهذلي", "العتيبي", "الثبيتي"];
+        const mFirst = ["سلطان", "مشاري", "عزام", "نواف", "طلال", "بدر", "تركي", "باسل", "خالد", "عبدالله", "محمد", "فيصل"];
+        const fFirst = ["ليان", "جود", "ريناد", "تولين", "غيداء", "نورة", "سارة", "أمل", "ريم", "هيفاء"];
+        const lNames = ["المالكي", "الشهري", "العتيبي", "القحطاني", "الزهراني", "الغامدي", "الحربي", "الشمري", "الدوسري", "المطيري"];
 
-        // تجهيز المصفوفة (تكرار التعليقات لتغطية العدد)
+        // تجهيز المصفوفة
         let allReviewsHtml = [];
         for (let i = 0; i < totalReviewsCount; i++) {
             const isMale = Math.random() > 0.5;
             const fullName = `${isMale ? mFirst[Math.floor(Math.random() * mFirst.length)] : fFirst[Math.floor(Math.random() * fFirst.length)]} ${lNames[Math.floor(Math.random() * lNames.length)]}`;
             const avatar = isMale ? "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_male.png" : "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_female.png";
-            const commentText = i < 850 ? comments[i % comments.length] : ""; // تعليقات لأغلب الحسابات
+            const commentText = i < 680 ? comments[i % comments.length] : ""; 
 
             allReviewsHtml.push(`
                 <div class="border-b last:border-0 mb-8 pb-8 last:pb-0 border-gray-200 dark:border-white/10 list-block custom-review custom-unique-review">
@@ -68,7 +67,7 @@
                 </div>`);
         }
 
-        // خلط التقييمات عشوائياً
+        // خلط التقييمات
         allReviewsHtml = allReviewsHtml.sort(() => Math.random() - 0.5);
 
         // --- 4. دالة الحقن التدريجي ---
@@ -85,7 +84,7 @@
 
         loadMoreReviews();
 
-        // --- 5. إضافة زر "تحميل المزيد" ---
+        // --- 5. الزر ---
         if (allReviewsHtml.length > perPage) {
             const wrapper = document.createElement('div');
             wrapper.className = "s-infinite-scroll-wrapper custom-load-more-wrapper";
@@ -96,7 +95,6 @@
                 </a>`;
             
             scrollContainer.after(wrapper);
-
             const btn = document.getElementById('trigger-load-more');
             const loader = document.getElementById('custom-loader');
             const btnText = btn.querySelector('.s-button-text');
@@ -105,7 +103,6 @@
                 e.preventDefault();
                 btnText.style.display = 'none';
                 loader.style.display = 'inline-block';
-
                 setTimeout(() => {
                     loadMoreReviews();
                     btnText.style.display = 'inline-block';
