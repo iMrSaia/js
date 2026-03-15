@@ -3,25 +3,16 @@
 
     const injectReviews = () => {
         const scrollContainer = document.querySelector('salla-infinite-scroll');
-        if (!scrollContainer || document.querySelector('.custom-unique-review')) return;
+        
+        // منع التكرار: الحماية من حقن الكود أو الزر أكثر من مرة
+        if (!scrollContainer || document.getElementById('trigger-load-more') || document.querySelector('.custom-unique-review')) return;
 
         // --- إعدادات العرض التدريجي ---
         const totalReviewsCount = 210;
         const perPage = 5; 
         let currentIndex = 0;
 
-        // --- 1. دالة توليد الوقت المنوع (كودك الأصلي) ---
-        const getDynamicTime = () => {
-            const timeOptions = [
-                "منذ ساعة", "منذ ساعتين", "منذ 5 ساعات", "منذ 10 ساعات",
-                "منذ يوم", "منذ يومين", "منذ 4 أيام", "منذ 6 أيام",
-                "منذ أسبوع", "منذ أسبوعين", "منذ 3 أسابيع",
-                "منذ شهر", "منذ شهرين", "منذ 3 أشهر"
-            ];
-            return timeOptions[Math.floor(Math.random() * timeOptions.length)];
-        };
-
-        // --- 2. تحديث العدادات (كودك الأصلي) ---
+        // --- 1. تحديث العدادات ---
         const sallaRating = document.querySelector('salla-rating-stars');
         if (sallaRating) {
             sallaRating.setAttribute('reviews', totalReviewsCount.toString());
@@ -31,7 +22,7 @@
         const footerTitle = document.querySelector('h2.text-lg.font-bold.opacity-70.mb-8');
         if (footerTitle) footerTitle.innerText = `${totalReviewsCount} تعليق`;
 
-        // --- 3. البيانات (كودك الأصلي) ---
+        // --- 2. البيانات (نصوصك الأصلية وقوائم الأسماء) ---
         const comments = [
             "أسرع وأروع خدمة 🌷", "مرره جبار وصلني المتابعين ❣️", "منتج كويس وزياده حلوه", "حبيت رائعين جدًا", "سريعين والله", "المتابعين ماينقصو اشكركم", "افضل متجر والله عميلهم مميز", "الصراحه سعر مقابل جودة", "تنفيذ سرييع ويتجاوبو معاك", "وصلو المتابعين سريع", "افضل متجر للامانه", "انصحكم فيه والله وعن تجربة", "رهيبين الحساب طار متابعينه 🚀", "مصداقية وسرعة الله يبارك لكم", "ثالث مرة أطلب 😍", "المتابعين حقيقيين ولا فيه نقص", "شكراً سايا ستور على الاحترافية", "افضل متجر لزيادة المتابعين", "الخدمة ناررر 🔥", "أنصح فيه وبقوة جودة وسعر", "والله ما قصرتوا بيض الله وجيهكم", "جودة المتابعين ممتازة جداً", "تعامل راقي وسرعة في الإنجاز", "سرني التعامل معكم ومو آخر مرة", "شي فاخر من الآخر 👍", "دعم فني متجاوب وسريع", "كل شي مرتب وسريع", "تطور حسابي بشكل ملحوظ شكراً", "شغل نظيف ومرتب", "كنت متردد بس التجربة اثبتت قوتكم", "سرعة البرق في التنفيذ ⚡", "المصداقية عنوانكم", "الله يرزقكم من واسع فضله", "ممتاز جداً انصح الجميع", "خدمة متميزة وسعر منافس", "تجاوب سريع وعمل احترافي", "تستاهلون عشر نجوم مو بس خمسة", "افضل تجربة شراء خدمات", "متابعين ثابتين وبدون نقص", "دقة في المواعيد وسرعة", "ما توقعت السرعة هذي صراحة", "شكراً لكم من القلب", "مبدعين ومتميزين دائماً", "راقيين في التعامل جداً", "توب التوب ماشاء الله", "الله يوفقكم خدمة بطلة", "انجاز سريع وشغل احترافي", "المتجر المفضل عندي من اليوم", "متجر ثقة وبدون خوف", "جبارين وربي 🔥"
         ];
@@ -40,16 +31,23 @@
         const fFirst = ["نورة", "سارة", "أمل", "مرام", "هيفاء", "ريم", "العنود", "ليلى", "نجلاء", "غادة", "رهف", "هند", "شروق", "نوف", "مشاعل", "أريج", "لطيفة", "موضي", "دلال", "منى", "خلود", "منيرة", "الجوهرة", "عبير", "أسماء"];
         const lNames = ["العتيبي", "القحطاني", "الزهراني", "الغامدي", "الحربي", "الشمري", "الدوسري", "المطيري", "الرشيدي", "السبيعي", "الشهري", "عسيري", "المالكي", "العنزي", "الرويلي", "الشهراني", "التميمي", "البقمي", "السهلي", "الخالدي", "الفضلي", "المرهون", "الحازمي", "القرني", "اليامي", "الثبيتي", "السلمي", "الجحدلي", "الصعيدي", "النفيعي", "الصلبي", "الشراري", "البلوي", "العمري", "الأسمري", "الاحمري", "الصبحي", "الذبياني", "اللحياني", "الحويطي", "الشرقي", "المري", "الهاجري", "السعدي", "المحيا", "العرفي", "الجهني", "البارقي", "الزامل", "العمودي"];
 
+        const getDynamicTime = () => {
+            const timeOptions = ["منذ ساعة", "منذ 5 ساعات", "منذ يوم", "منذ يومين", "منذ أسبوع", "منذ شهر"];
+            return timeOptions[Math.floor(Math.random() * timeOptions.length)];
+        };
+
+        // --- 3. تجهيز مصفوفة التقييمات ---
         let reviewPool = [];
         for (let i = 0; i < totalReviewsCount; i++) {
             reviewPool.push(i < 160 ? comments[i % comments.length] : "");
         }
         reviewPool = reviewPool.sort(() => Math.random() - 0.5);
 
-        // تحويل البيانات إلى مصفوفة HTML
         const allReviewsHtml = reviewPool.map((commentText) => {
             const isMale = Math.random() > 0.5;
-            const fullName = `${isMale ? mFirst[Math.floor(Math.random() * mFirst.length)] : fFirst[Math.floor(Math.random() * fFirst.length)]} ${lNames[Math.floor(Math.random() * lNames.length)]}`;
+            const firstName = isMale ? mFirst[Math.floor(Math.random() * mFirst.length)] : fFirst[Math.floor(Math.random() * fFirst.length)];
+            const lastName = lNames[Math.floor(Math.random() * lNames.length)];
+            const fullName = `${firstName} ${lastName}`;
             const avatar = isMale ? "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_male.png" : "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_female.png";
             
             return `
@@ -59,15 +57,20 @@
                         <div class="flex-1">
                             <div class="flex flex-wrap md:items-center justify-between mb-2 md:mb-0">
                                 <div class="flex items-center mb-1">
-                                    <h3 class="font-bold text-base rtl:ml-10 ltr:mr-10 fix-align" style="margin-left: 10px;">${fullName}</h3>
-                                    <div class="flex items-center">
-                                        <i class="sicon-check rounded-full bg-amber-400 h-5 w-5 flex items-center justify-center text-xs" style="background-color: #fbbf24; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; margin-left: 5px;"></i>
-                                        <span class="fix-align text-sm opacity-80">قام بالشراء</span>
+                                    <h3 class="font-bold text-base rtl:ml-10 ltr:mr-10 fix-align">${fullName}</h3>
+                                    <div class="flex">
+                                        <i class="sicon-check rounded-full bg-amber-400 h-5 w-5 flex items-center justify-center text-xs" style="background-color: #fbbf24; color: white;"></i>
+                                        <span class="fix-align rtl:mr-1 ltr:ml-1 text-sm opacity-80 mt-0.5">قام بالشراء, </span>
+                                        <span class="fix-align rtl:mr-1 ltr:ml-1 text-sm opacity-80 mt-0.5">تم التقييم</span>
                                     </div>
                                 </div>
                                 <p class="opacity-70 text-sm">${getDynamicTime()}</p>
-                                <div class="w-full comment__rating text-xs mb-2.5 rtl:space-x-reverse space-x-1" style="color: #fbbf24;">
-                                    <i class="sicon-star2 inline-block text-amber-400"></i><i class="sicon-star2 inline-block text-amber-400"></i><i class="sicon-star2 inline-block text-amber-400"></i><i class="sicon-star2 inline-block text-amber-400"></i><i class="sicon-star2 inline-block text-amber-400"></i>
+                                <div class="w-full comment__rating text-xs mb-2.5 rtl:space-x-reverse space-x-1">
+                                    <i class="sicon-star2 inline-block text-amber-400"></i>
+                                    <i class="sicon-star2 inline-block text-amber-400"></i>
+                                    <i class="sicon-star2 inline-block text-amber-400"></i>
+                                    <i class="sicon-star2 inline-block text-amber-400"></i>
+                                    <i class="sicon-star2 inline-block text-amber-400"></i>
                                 </div>
                             </div>
                             ${commentText ? `<div class="prose prose-sm max-w-none opacity-70"><p>${commentText}</p></div>` : ''}
@@ -76,23 +79,21 @@
                 </div>`;
         });
 
-        // --- 4. دالة الحقن التدريجي (5 في كل مرة) ---
+        // --- 4. دالة الحقن التدريجي ---
         const loadMoreReviews = () => {
             const nextBatch = allReviewsHtml.slice(currentIndex, currentIndex + perPage);
             nextBatch.forEach(html => scrollContainer.insertAdjacentHTML('beforeend', html));
             currentIndex += perPage;
 
-            // إخفاء الزر إذا انتهت كل التقييمات
             if (currentIndex >= allReviewsHtml.length) {
                 const wrapper = document.querySelector('.custom-load-more-wrapper');
                 if (wrapper) wrapper.style.display = 'none';
             }
         };
 
-        // حقن أول 5 عند تحميل الصفحة
         loadMoreReviews();
 
-        // --- 5. إضافة زر "تحميل المزيد" مع اللودر ---
+        // --- 5. إضافة زر "تحميل المزيد" ---
         if (allReviewsHtml.length > perPage) {
             const wrapper = document.createElement('div');
             wrapper.className = "s-infinite-scroll-wrapper custom-load-more-wrapper";
@@ -117,7 +118,7 @@
                     loadMoreReviews();
                     btnText.style.display = 'inline-block';
                     loader.style.display = 'none';
-                }, 800); // سرعة اللودر
+                }, 800);
             });
         }
     };
