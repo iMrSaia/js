@@ -3,14 +3,16 @@
 
     const injectReviews = () => {
         const scrollContainer = document.querySelector('salla-infinite-scroll');
-        if (!scrollContainer || document.querySelector('.custom-unique-review')) return;
+        
+        // منع التكرار: الحماية من حقن الكود أو الزر أكثر من مرة
+        if (!scrollContainer || document.getElementById('trigger-load-more') || document.querySelector('.custom-unique-review')) return;
 
         // --- إعدادات العرض التدريجي ---
         const totalReviewsCount = 37;
         const perPage = 5; 
         let currentIndex = 0;
 
-        // --- 1. العدادات (37 تقييم) ---
+        // --- 1. تحديث العدادات (37 تقييم) ---
         const sallaRating = document.querySelector('salla-rating-stars');
         if (sallaRating) {
             sallaRating.setAttribute('reviews', totalReviewsCount.toString());
@@ -20,7 +22,7 @@
         const footerTitle = document.querySelector('h2.text-lg.font-bold.opacity-70.mb-8');
         if (footerTitle) footerTitle.innerText = `${totalReviewsCount} تعليق`;
 
-        // --- 2. الأسماء والدوال والبيانات (كودك الأصلي) ---
+        // --- 2. البيانات والدوال الذكية (كما وردت في نصك) ---
         const mFirst = ["جسار", "هتان", "تامر", "مجاهد", "نبيل", "كنان", "ساهر", "فادي", "أمين", "صفي"];
         const fFirst = ["ديم", "رسيل", "سلاف", "وجد", "ميار", "تولين", "ليان", "وسن", "ليال", "جنى"];
         const lNames = ["باعقيل", "المنصوري", "الصعيدي", "النفيسة", "السلمان", "الخضير", "الحيدر", "السويلم", "المجلي", "الدخيل"];
@@ -33,7 +35,7 @@
         };
 
         const getUniqueTime = () => {
-            const timeOptions = ["منذ 7 دقائق", "منذ 20 دقيقة", "منذ 45 دقيقة", "منذ 15 ساعة", "منذ 18 ساعة", "منذ 4 أيام"];
+            const timeOptions = ["منذ 7 دقائق", "منذ 20 دقيقة", "منذ 45 دقيقة", "منذ 15 ساعة", "منذ 18 ساعة", "منذ يوم", "منذ 4 أيام"];
             return timeOptions[Math.floor(Math.random() * timeOptions.length)];
         };
 
@@ -59,15 +61,20 @@
                         <div class="flex-1">
                             <div class="flex flex-wrap md:items-center justify-between mb-2 md:mb-0">
                                 <div class="flex items-center mb-1">
-                                    <h3 class="font-bold text-base rtl:ml-10 ltr:mr-10 fix-align" style="margin-left: 10px;">${fullName}</h3>
-                                    <div class="flex items-center">
-                                        <i class="sicon-check rounded-full bg-amber-400 h-5 w-5 flex items-center justify-center text-xs" style="background-color: #fbbf24; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; margin-left: 5px;"></i>
-                                        <span class="fix-align text-sm opacity-80">قام بالشراء</span>
+                                    <h3 class="font-bold text-base rtl:ml-10 ltr:mr-10 fix-align">${fullName}</h3>
+                                    <div class="flex">
+                                        <i class="sicon-check rounded-full bg-amber-400 h-5 w-5 flex items-center justify-center text-xs" style="background-color: #fbbf24; color: white;"></i>
+                                        <span class="fix-align rtl:mr-1 ltr:ml-1 text-sm opacity-80 mt-0.5">قام بالشراء, </span>
+                                        <span class="fix-align rtl:mr-1 ltr:ml-1 text-sm opacity-80 mt-0.5">تم التقييم</span>
                                     </div>
                                 </div>
                                 <p class="opacity-70 text-sm">${getUniqueTime()}</p>
-                                <div class="w-full comment__rating text-xs mb-2.5 rtl:space-x-reverse space-x-1" style="color: #fbbf24;">
-                                    <i class="sicon-star2 inline-block"></i><i class="sicon-star2 inline-block"></i><i class="sicon-star2 inline-block"></i><i class="sicon-star2 inline-block"></i><i class="sicon-star2 inline-block"></i>
+                                <div class="w-full comment__rating text-xs mb-2.5 rtl:space-x-reverse space-x-1">
+                                    <i class="sicon-star2 inline-block text-amber-400"></i>
+                                    <i class="sicon-star2 inline-block text-amber-400"></i>
+                                    <i class="sicon-star2 inline-block text-amber-400"></i>
+                                    <i class="sicon-star2 inline-block text-amber-400"></i>
+                                    <i class="sicon-star2 inline-block text-amber-400"></i>
                                 </div>
                             </div>
                             ${commentText ? `<div class="prose prose-sm max-w-none opacity-70"><p>${commentText}</p></div>` : ''}
@@ -76,7 +83,7 @@
                 </div>`;
         });
 
-        // --- 3. دالة الحقن التدريجي (5 في كل مرة) ---
+        // --- 3. دالة الحقن التدريجي ---
         const loadMoreReviews = () => {
             const nextBatch = allReviewsHtml.slice(currentIndex, currentIndex + perPage);
             nextBatch.forEach(html => scrollContainer.insertAdjacentHTML('beforeend', html));
