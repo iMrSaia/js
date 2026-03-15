@@ -3,14 +3,15 @@
 
     const injectReviews = () => {
         const scrollContainer = document.querySelector('salla-infinite-scroll');
-        if (!scrollContainer || document.querySelector('.custom-unique-review')) return;
+        // شرط الأمان: إذا وجد التعليقات أو الزر مسبقاً لا تفعل شيئاً
+        if (!scrollContainer || document.querySelector('.custom-unique-review') || document.getElementById('trigger-load-more')) return;
 
-        // --- 1. الإعدادات (نفس أرقامك بالضبط) ---
+        // --- إعدادات العرض التدريجي ---
         const totalReviewsCount = 1232;
         const perPage = 5; 
         let currentIndex = 0;
 
-        // تحديث العدادات (كودك الأصلي)
+        // --- 1. العدادات ---
         const sallaRating = document.querySelector('salla-rating-stars');
         if (sallaRating) {
             sallaRating.setAttribute('reviews', totalReviewsCount.toString());
@@ -20,7 +21,7 @@
         const footerTitle = document.querySelector('h2.text-lg.font-bold.opacity-70.mb-8');
         if (footerTitle) footerTitle.innerText = `${totalReviewsCount} تعليق`;
 
-        // --- 2. البيانات والأسماء (كودك الأصلي بدون تعديل حرف واحد) ---
+        // --- 2. البيانات والأسماء (نفس بياناتك بالضبط) ---
         const mFirst = ["خالد", "عبدالله", "فهد", "سلطان", "فيصل", "محمد", "سعد", "ماجد", "بدر", "تركي", "سلمان", "راكان", "مشعل", "طلال", "بندر", "نواف", "ثامر", "زياد", "سعود", "وليد", "ياسر", "أحمد", "إبراهيم", "يوسف", "علي", "عمر", "صالح", "عبدالعزيز", "مشاري", "متعب", "باسل", "راشد", "فارس", "سامي", "رائد", "منير", "عصام", "وائل", "لؤي", "بسام", "نايف", "حماد", "منصور", "سطام", "خليل", "ناصر", "ياسين", "طه", "ساهر", "جمال"];
         const fFirst = ["نورة", "سارة", "أمل", "مرام", "هيفاء", "ريم", "العنود", "ليلى", "نجلاء", "غادة", "رهف", "هند", "شروق", "نوف", "مشاعل", "أريج", "لطيفة", "موضي", "دلال", "منى", "خلود", "منيرة", "عبير", "أسماء", "فاطمة", "مريم", "عائشة", "تهاني", "نجود", "جواهر", "بدور", "شوق", "حصة", "سحر", "أحلام", "بشاير", "نادية", "مها", "رنا", "ليان", "جود", "تولين", "ديمة", "ريتاج", "كيان", "غنى", "وسن", "ليال", "جنى", "لينا"];
         const lNames = ["العتيبي", "القحطاني", "الزهراني", "الغامدي", "الحربي", "الشمري", "الدوسري", "المطيري", "الرشيدي", "السبيعي", "الشهري", "عسيري", "المالكي", "العنزي", "الرويلي", "الشهراني", "التميمي", "البقمي", "السهلي", "الخالدي", "الفضلي", "المرهون", "الحازمي", "القرني", "اليامي", "الثبيتي", "السلمي", "الجحدلي", "الصعيدي", "النفيعي", "الصلبي", "الشراري", "البلوي", "العمري", "الأسمري", "الاحمري", "الصبحي", "الذبياني", "اللحياني", "الحويطي", "الشرقي", "المري", "الهاجري", "السعدي", "المحيا", "العرفي", "الجهني", "البارقي", "الزامل", "العمودي", "النجار", "الحداد", "الصالح", "الفوزان", "الراشد", "السيف", "الجمعة", "الموسى", "الناصر", "السديري", "الزايد"];
@@ -37,16 +38,17 @@
             return timeOptions[Math.floor(Math.random() * timeOptions.length)];
         };
 
-        // --- 3. دالة بناء التعليق (تُستدعى فقط عند الحاجة - نظام اللايكات) ---
-        const createSingleReviewHtml = () => {
+        // --- 3. توليد جميع التقييمات مسبقاً وتخزينها (نظام اللايكات) ---
+        let allReviewsHtml = [];
+        for (let i = 0; i < totalReviewsCount; i++) {
             const isMale = Math.random() > 0.5;
             const firstName = isMale ? mFirst[Math.floor(Math.random() * mFirst.length)] : fFirst[Math.floor(Math.random() * fFirst.length)];
             const lastName = lNames[Math.floor(Math.random() * lNames.length)];
             const fullName = `${firstName} ${lastName}`;
             const avatar = isMale ? "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_male.png" : "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_female.png";
-            const commentText = currentIndex < 1000 ? generateUniqueComment() : "";
-
-            return `
+            const commentText = i < 1100 ? generateUniqueComment() : "";
+            
+            const html = `
                 <div class="border-b last:border-0 mb-8 pb-8 last:pb-0 border-gray-200 dark:border-white/10 list-block custom-review custom-unique-review">
                     <div class="comment flex text-sm rtl:space-x-reverse space-x-3 text-right" style="direction: rtl;">
                         <div class="flex-none"><img src="${avatar}" alt="${fullName}" class="w-10 h-10 object-cover rounded-full"></div>
@@ -68,20 +70,16 @@
                         </div>
                     </div>
                 </div>`;
-        };
+            allReviewsHtml.push(html);
+        }
 
         // --- 4. دالة الحقن التدريجي (نظام اللايكات) ---
         const loadMoreReviews = () => {
-            let batchHtml = "";
-            for (let i = 0; i < perPage; i++) {
-                if (currentIndex < totalReviewsCount) {
-                    batchHtml += createSingleReviewHtml();
-                    currentIndex++;
-                }
-            }
-            scrollContainer.insertAdjacentHTML('beforeend', batchHtml);
+            const nextBatch = allReviewsHtml.slice(currentIndex, currentIndex + perPage);
+            nextBatch.forEach(html => scrollContainer.insertAdjacentHTML('beforeend', html));
+            currentIndex += perPage;
 
-            if (currentIndex >= totalReviewsCount) {
+            if (currentIndex >= allReviewsHtml.length) {
                 const wrapper = document.querySelector('.custom-load-more-wrapper');
                 if (wrapper) wrapper.style.display = 'none';
             }
@@ -90,8 +88,8 @@
         // حقن أول 5 عند تحميل الصفحة
         loadMoreReviews();
 
-        // --- 5. إضافة زر "تحميل المزيد" والتحكم في اللودر ---
-        if (totalReviewsCount > perPage) {
+        // --- 5. إضافة زر "تحميل المزيد" ---
+        if (allReviewsHtml.length > perPage) {
             const wrapper = document.createElement('div');
             wrapper.className = "s-infinite-scroll-wrapper custom-load-more-wrapper";
             wrapper.innerHTML = `
@@ -112,7 +110,7 @@
                 loader.style.display = 'inline-block';
 
                 setTimeout(() => {
-                    loadMoreReviews(); // جلب الـ 5 التالية (يتم بناؤها الآن فقط)
+                    loadMoreReviews();
                     btnText.style.display = 'inline-block';
                     loader.style.display = 'none';
                 }, 800); 
