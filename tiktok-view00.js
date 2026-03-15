@@ -3,10 +3,11 @@
 
     const injectReviews = () => {
         const scrollContainer = document.querySelector('salla-infinite-scroll');
-        // منع التكرار وضمان وجود الحاوية
-        if (!scrollContainer || document.querySelector('.custom-unique-review') || document.getElementById('trigger-load-more')) return;
+        
+        // منع التكرار: إذا كان الزر موجوداً أو التعليقات محقونة مسبقاً، اخرج من الدالة فوراً
+        if (!scrollContainer || document.getElementById('trigger-load-more') || document.querySelector('.custom-unique-review')) return;
 
-        // --- 1. الإعدادات والتحميل التدريجي ---
+        // --- 1. الإعدادات ---
         const totalReviewsCount = 933;
         const perPage = 5; 
         let currentIndex = 0;
@@ -38,7 +39,6 @@
             return timeOptions[Math.floor(Math.random() * timeOptions.length)];
         };
 
-        // تجهيز التقييمات مسبقاً في مصفوفة (نفس منطق اللايكات)
         let allReviewsHtml = [];
         for (let i = 0; i < totalReviewsCount; i++) {
             const isMale = Math.random() > 0.5;
@@ -79,7 +79,6 @@
             allReviewsHtml.push(html);
         }
 
-        // --- 4. دالة التحكم في الظهور ---
         const loadMoreReviews = () => {
             const nextBatch = allReviewsHtml.slice(currentIndex, currentIndex + perPage);
             nextBatch.forEach(html => scrollContainer.insertAdjacentHTML('beforeend', html));
@@ -90,9 +89,10 @@
             }
         };
 
-        loadMoreReviews(); // تحميل الدفعة الأولى
+        // --- تنفيذ الحقن الأول ---
+        loadMoreReviews();
 
-        // --- 5. زر تحميل المزيد ---
+        // --- إضافة الزر مرة واحدة فقط ---
         if (allReviewsHtml.length > perPage) {
             const wrapper = document.createElement('div');
             wrapper.className = "s-infinite-scroll-wrapper custom-load-more-wrapper";
@@ -102,6 +102,7 @@
                     <span class="s-button-loader s-button-loader-center s-infinite-scroll-btn-loader" id="custom-loader" style="display: none"></span>
                 </a>`;
             scrollContainer.after(wrapper);
+            
             const btn = document.getElementById('trigger-load-more');
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
