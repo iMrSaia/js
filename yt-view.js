@@ -5,54 +5,53 @@
         const scrollContainer = document.querySelector('salla-infinite-scroll');
         if (!scrollContainer || document.querySelector('.custom-unique-review')) return;
 
+        // --- إعدادات العرض التدريجي ---
+        const totalReviewsCount = 73;
+        const perPage = 5; 
+        let currentIndex = 0;
+
         // --- 1. العدادات (73 تقييم) ---
-        const totalReviews = 73;
         const sallaRating = document.querySelector('salla-rating-stars');
         if (sallaRating) {
-            sallaRating.setAttribute('reviews', totalReviews.toString());
+            sallaRating.setAttribute('reviews', totalReviewsCount.toString());
             const reviewSpan = sallaRating.querySelector('.s-rating-stars-reviews');
-            if (reviewSpan) reviewSpan.innerText = `(${totalReviews} تقييم)`;
+            if (reviewSpan) reviewSpan.innerText = `(${totalReviewsCount} تقييم)`;
         }
         const footerTitle = document.querySelector('h2.text-lg.font-bold.opacity-70.mb-8');
-        if (footerTitle) footerTitle.innerText = `${totalReviews} تعليق`;
+        if (footerTitle) footerTitle.innerText = `${totalReviewsCount} تعليق`;
 
-        // --- 2. أسماء وعوائل جديدة كلياً (عوائل من القصيم وسدير لم تُستخدم سابقاً) ---
+        // --- 2. الأسماء والدوال (كودك الأصلي) ---
         const mFirst = ["سليمان", "صالح", "محمد", "عبدالعزيز", "تركي", "فهد", "خالد", "ياسر", "ثامر", "زياد"];
         const fFirst = ["لولوة", "هيا", "مضاوي", "نورة", "سارة", "حصّة", "غادة", "دلال", "أريج", "هند"];
         const lNames = ["التويجري", "الراجحي", "القصيبي", "الخويطر", "المقبل", "السليم", "الخلف", "الحميد", "الناصر", "الرشيد"];
 
-        // --- 3. دالة توليد تعليق ذكي (بدون إيموجي - صياغة جديدة) ---
         const generateSmartComment = () => {
             const starts = ["تجربة ممتازة فعلاً", "أفضل متجر للمشاهدات", "بكل أمانة المتجر صادق", "سرعة تنفيذ خرافية", "مجهود يشكرون عليه", "خدمة تبيض الوجه", "انصح بالتعامل معهم", "الله يوفقكم ويبارك لكم", "ما توقعت السرعة هذي", "ثقة ومصداقية"];
             const middles = ["مشاهدات بدون نقص وصلو سريع سريعين", "التنفيذ فوري والعدد وصل كامل بالقناة", "افضل متجر لزيادة مشاهدات يوتيوب", "المشاهدات حقيقية والضمان موجود فعلاً", "بلمح البصر اكتمل الطلب وما نقص شي", "خدمة مميزة وجودة عالية جداً", "انصح الكل فيهم لرفع تفاعل القناة", "بثواني بدا التنفيذ والعدد اكتمل", "شغل مرتب ومضمون مئة بالمئة", "التنفيذ آلي وسريع جداً جداً"];
-            
             return `${starts[Math.floor(Math.random() * starts.length)]} ${middles[Math.floor(Math.random() * middles.length)]}`;
         };
 
-        // --- 4. دالة توليد وقت (تبدأ من ساعة واحدة وفوق) ---
         const getUniqueTime = () => {
-            const timeOptions = [
-                "منذ ساعة", "منذ 3 ساعات", "منذ 5 ساعات", "منذ 10 ساعات", "منذ 18 ساعة", 
-                "منذ يوم", "منذ يومين", "منذ 4 أيام", "منذ أسبوع"
-            ];
+            const timeOptions = ["منذ ساعة", "منذ 3 ساعات", "منذ 5 ساعات", "منذ 10 ساعات", "منذ 18 ساعة", "منذ يوم", "منذ يومين", "منذ 4 أيام", "منذ أسبوع"];
             return timeOptions[Math.floor(Math.random() * timeOptions.length)];
         };
 
-        // --- 5. حقن التقييمات (50 نص و 23 نجوم) ---
+        // تجهيز مصفوفة التقييمات (50 نص و 23 نجوم)
         let reviewPool = [];
-        for (let i = 0; i < totalReviews; i++) {
+        for (let i = 0; i < totalReviewsCount; i++) {
             reviewPool.push(i < 50 ? generateSmartComment() : "");
         }
         reviewPool = reviewPool.sort(() => Math.random() - 0.5);
 
-        reviewPool.forEach((commentText) => {
+        // تحويل البيانات إلى مصفوفة HTML
+        const allReviewsHtml = reviewPool.map((commentText) => {
             const isMale = Math.random() > 0.5;
             const firstName = isMale ? mFirst[Math.floor(Math.random() * mFirst.length)] : fFirst[Math.floor(Math.random() * fFirst.length)];
             const lastName = lNames[Math.floor(Math.random() * lNames.length)];
             const fullName = `${firstName} ${lastName}`;
             const avatar = isMale ? "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_male.png" : "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_female.png";
             
-            const reviewHtml = `
+            return `
                 <div class="border-b last:border-0 mb-8 pb-8 last:pb-0 border-gray-200 dark:border-white/10 list-block custom-review custom-unique-review">
                     <div class="comment flex text-sm rtl:space-x-reverse space-x-3 text-right" style="direction: rtl;">
                         <div class="flex-none"><img src="${avatar}" alt="${fullName}" class="w-10 h-10 object-cover rounded-full"></div>
@@ -74,8 +73,51 @@
                         </div>
                     </div>
                 </div>`;
-            scrollContainer.insertAdjacentHTML('beforeend', reviewHtml);
         });
+
+        // --- 3. دالة الحقن التدريجي ---
+        const loadMoreReviews = () => {
+            const nextBatch = allReviewsHtml.slice(currentIndex, currentIndex + perPage);
+            nextBatch.forEach(html => scrollContainer.insertAdjacentHTML('beforeend', html));
+            currentIndex += perPage;
+
+            if (currentIndex >= allReviewsHtml.length) {
+                const wrapper = document.querySelector('.custom-load-more-wrapper');
+                if (wrapper) wrapper.style.display = 'none';
+            }
+        };
+
+        // عرض أول دفعة
+        loadMoreReviews();
+
+        // --- 4. إضافة زر "تحميل المزيد" بستايل سلة ---
+        if (allReviewsHtml.length > perPage) {
+            const wrapper = document.createElement('div');
+            wrapper.className = "s-infinite-scroll-wrapper custom-load-more-wrapper";
+            wrapper.innerHTML = `
+                <a href="javascript:void(0)" class="s-infinite-scroll-btn s-button-btn s-button-primary" id="trigger-load-more">
+                    <span class="s-button-text s-infinite-scroll-btn-text">تحميل المزيد</span>
+                    <span class="s-button-loader s-button-loader-center s-infinite-scroll-btn-loader" id="custom-loader" style="display: none"></span>
+                </a>`;
+            
+            scrollContainer.after(wrapper);
+
+            const btn = document.getElementById('trigger-load-more');
+            const loader = document.getElementById('custom-loader');
+            const btnText = btn.querySelector('.s-button-text');
+
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                btnText.style.display = 'none';
+                loader.style.display = 'inline-block';
+
+                setTimeout(() => {
+                    loadMoreReviews();
+                    btnText.style.display = 'inline-block';
+                    loader.style.display = 'none';
+                }, 800);
+            });
+        }
     };
 
     window.addEventListener('load', injectReviews);
