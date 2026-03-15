@@ -3,14 +3,16 @@
 
     const injectReviews = () => {
         const scrollContainer = document.querySelector('salla-infinite-scroll');
-        if (!scrollContainer || document.querySelector('.custom-unique-review')) return;
+        
+        // منع التكرار: الحماية من حقن الكود أو الزر أكثر من مرة
+        if (!scrollContainer || document.getElementById('trigger-load-more') || document.querySelector('.custom-unique-review')) return;
 
         // --- إعدادات العرض التدريجي ---
-        const totalReviewsCount = 28;
+        const totalReviewsCount = 11;
         const perPage = 5; 
         let currentIndex = 0;
 
-        // --- 1. العدادات (28 تقييم) ---
+        // --- 1. تحديث العدادات (11 تقييم) ---
         const sallaRating = document.querySelector('salla-rating-stars');
         if (sallaRating) {
             sallaRating.setAttribute('reviews', totalReviewsCount.toString());
@@ -20,26 +22,27 @@
         const footerTitle = document.querySelector('h2.text-lg.font-bold.opacity-70.mb-8');
         if (footerTitle) footerTitle.innerText = `${totalReviewsCount} تعليق`;
 
-        // --- 2. الأسماء والدوال (كودك الأصلي) ---
-        const mFirst = ["هاشم", "عصام", "حمزة", "أنيس", "عباس", "منير", "لطفي", "أمين", "سراج", "بهجت"];
-        const fFirst = ["سميرة", "فوزية", "أمل", "عفاف", "يسرى", "هيفاء", "فاتن", "سمية", "نهى", "إجلال"];
-        const lNames = ["باعقيل", "الجيلاني", "الفارسي", "الهوساوي", "البارقي", "الصهيبي", "اللمعي", "المحمودي", "الغامدي", "العسيري"];
+        // --- 2. الأسماء الحجازية والبيانات ---
+        const mFirst = ["مؤيد", "هاني", "وائل", "باسم", "غسان", "عمار", "طلال", "رائد", "منصور", "زهير"];
+        const fFirst = ["دانية", "أروى", "وئام", "غيداء", "لمى", "نجلاء", "هديل", "سوزان", "ميسون", "هالة"];
+        const lNames = ["باناجة", "نصيف", "خياط", "جمجوم", "بخش", "بترجي", "قزاز", "لنجاوي", "فتيني", "باعشن"];
 
         const generateSmartComment = () => {
-            const starts = ["بكل أمانة المتجر", "تجربة احترافية", "الله يبارك لكم في رزقكم", "سرعة تنفيذ لا توصف", "افضل متجر تعاملت معه", "تعامل في قمة الرقي", "انصح الجميع بالاشتراك", "سرعة بالانجاز وجودة", "ما قصرتوا على الدعم", "ثقة ومصداقية تامة"];
-            const middles = ["مشتركين بدون نقص وصلو سريع سريعين", "التنفيذ فوري ومافي نقص بالقناة", "افضل متجر للمشتركين يوتيوب", "المشتركين ثابتين والضمان حقيقي فعلا", "سرعة البرق في وصول مشتركين اليوتيوب", "خدمة توب وجودة عالية جدا", "انصحكم فيه لزيادة تفاعل القناة", "بثواني بدا التنفيذ وما نقص شي", "شغل مرتب ومضمون 100 بالمية", "التنفيذ آلي وسريع جدا جدا"];
-            return `${starts[Math.floor(Math.random() * starts.length)]} ${middles[Math.floor(Math.random() * middles.length)]}`;
+            const starts = ["بصراحة المتجر رهيب", "تجربة ممتازة", "الله يعطيهم العافية", "خدمة سريعة وموثوقة", "أفضل متجر مشتركين", "تعامل ذوق", "أنصح فيه بشدة", "ما قصرتوا والله", "شغل احترافي", "مصداقية عالية"];
+            const middles = ["المشتركين وصلوا بدون نقص", "زادوا المشتركين بسرعة خرافية", "أفضل جودة مشتركين يوتيوب", "التنفيذ كان فوري وممتاز", "المشتركين حقيقيين وثابتين", "خدمة تبيض الوجه وسريعة", "انصح الكل يجرب الخدمة", "وصل الطلب في وقت قياسي", "شغل مرتب ومضمون", "التنفيذ آلي وسريع جداً"];
+            const ends = ["", "", "✨", "", "", "🚀", "", "👍", "", ""]; 
+            return `${starts[Math.floor(Math.random() * starts.length)]} ${middles[Math.floor(Math.random() * middles.length)]} ${ends[Math.floor(Math.random() * ends.length)]}`;
         };
 
         const getUniqueTime = () => {
-            const timeOptions = ["منذ 14 دقيقة", "منذ 32 دقيقة", "منذ 5 ساعات", "منذ 11 ساعة", "منذ 17 ساعة", "منذ 21 ساعة", "منذ 7 أيام"];
+            const timeOptions = ["منذ 15 دقيقة", "منذ ساعة", "منذ 6 ساعات", "منذ 12 ساعة", "منذ 19 ساعة", "منذ يوم", "منذ 3 أيام"];
             return timeOptions[Math.floor(Math.random() * timeOptions.length)];
         };
 
-        // تجهيز مصفوفة التقييمات (20 نص و 8 نجوم)
+        // تجهيز مصفوفة التقييمات (8 نصوص و 3 نجوم فقط)
         let reviewPool = [];
         for (let i = 0; i < totalReviewsCount; i++) {
-            reviewPool.push(i < 20 ? generateSmartComment() : "");
+            reviewPool.push(i < 8 ? generateSmartComment() : "");
         }
         reviewPool = reviewPool.sort(() => Math.random() - 0.5);
 
@@ -58,15 +61,20 @@
                         <div class="flex-1">
                             <div class="flex flex-wrap md:items-center justify-between mb-2 md:mb-0">
                                 <div class="flex items-center mb-1">
-                                    <h3 class="font-bold text-base rtl:ml-10 ltr:mr-10 fix-align" style="margin-left: 10px;">${fullName}</h3>
-                                    <div class="flex items-center">
-                                        <i class="sicon-check rounded-full bg-amber-400 h-5 w-5 flex items-center justify-center text-xs" style="background-color: #fbbf24; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; margin-left: 5px;"></i>
-                                        <span class="fix-align text-sm opacity-80">قام بالشراء</span>
+                                    <h3 class="font-bold text-base rtl:ml-10 ltr:mr-10 fix-align">${fullName}</h3>
+                                    <div class="flex">
+                                        <i class="sicon-check rounded-full bg-amber-400 h-5 w-5 flex items-center justify-center text-xs" style="background-color: #fbbf24; color: white;"></i>
+                                        <span class="fix-align rtl:mr-1 ltr:ml-1 text-sm opacity-80 mt-0.5">قام بالشراء, </span>
+                                        <span class="fix-align rtl:mr-1 ltr:ml-1 text-sm opacity-80 mt-0.5">تم التقييم</span>
                                     </div>
                                 </div>
                                 <p class="opacity-70 text-sm">${getUniqueTime()}</p>
-                                <div class="w-full comment__rating text-xs mb-2.5 rtl:space-x-reverse space-x-1" style="color: #fbbf24;">
-                                    <i class="sicon-star2 inline-block"></i><i class="sicon-star2 inline-block"></i><i class="sicon-star2 inline-block"></i><i class="sicon-star2 inline-block"></i><i class="sicon-star2 inline-block"></i>
+                                <div class="w-full comment__rating text-xs mb-2.5 rtl:space-x-reverse space-x-1">
+                                    <i class="sicon-star2 inline-block text-amber-400"></i>
+                                    <i class="sicon-star2 inline-block text-amber-400"></i>
+                                    <i class="sicon-star2 inline-block text-amber-400"></i>
+                                    <i class="sicon-star2 inline-block text-amber-400"></i>
+                                    <i class="sicon-star2 inline-block text-amber-400"></i>
                                 </div>
                             </div>
                             ${commentText ? `<div class="prose prose-sm max-w-none opacity-70"><p>${commentText}</p></div>` : ''}
@@ -87,7 +95,7 @@
             }
         };
 
-        // عرض أول دفعة
+        // عرض أول دفعة تلقائياً
         loadMoreReviews();
 
         // --- 4. إضافة زر "تحميل المزيد" بستايل سلة ---
