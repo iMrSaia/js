@@ -3,35 +3,35 @@
 
     const injectReviews = () => {
         const scrollContainer = document.querySelector('salla-infinite-scroll');
-        // التأكد من وجود الحاوية وعدم تكرار الحقن
         if (!scrollContainer || document.querySelector('.custom-unique-review')) return;
 
-        // --- 1. الإعدادات ---
-        const totalReviewsCount = 1232;
+        // --- إعدادات العرض التدريجي ---
+        const totalReviewsCount = 1232; // العدد الضخم
         const perPage = 5; 
         let currentIndex = 0;
 
-        // تحديث العدادات العلوية فوراً
-        const sallaRating = document.querySelector('salla-rating-stars');
-        if (sallaRating) {
-            sallaRating.setAttribute('reviews', totalReviewsCount.toString());
-            const reviewSpan = sallaRating.querySelector('.s-rating-stars-reviews');
-            if (reviewSpan) reviewSpan.innerText = `(${totalReviewsCount} تقييم)`;
-        }
-        const footerTitle = document.querySelector('h2.text-lg.font-bold.opacity-70.mb-8');
-        if (footerTitle) footerTitle.innerText = `${totalReviewsCount} تعليق`;
+        // --- 1. العدادات ---
+        const updateCounters = () => {
+            const sallaRating = document.querySelector('salla-rating-stars');
+            if (sallaRating) {
+                sallaRating.setAttribute('reviews', totalReviewsCount.toString());
+                const reviewSpan = sallaRating.querySelector('.s-rating-stars-reviews');
+                if (reviewSpan) reviewSpan.innerText = `(${totalReviewsCount} تقييم)`;
+            }
+            const footerTitle = document.querySelector('h2.text-lg.font-bold.opacity-70.mb-8');
+            if (footerTitle) footerTitle.innerText = `${totalReviewsCount} تعليق`;
+        };
+        updateCounters();
 
         // --- 2. البيانات (الأسماء والقوائم) ---
         const mFirst = ["خالد", "عبدالله", "فهد", "سلطان", "فيصل", "محمد", "سعد", "ماجد", "بدر", "تركي", "سلمان", "راكان", "مشعل", "طلال", "بندر", "نواف", "ثامر", "زياد", "سعود", "وليد", "ياسر", "أحمد", "إبراهيم", "يوسف", "علي", "عمر", "صالح", "عبدالعزيز", "مشاري", "متعب", "باسل", "راشد", "فارس", "سامي", "رائد", "منير", "عصام", "وائل", "لؤي", "بسام", "نايف", "حماد", "منصور", "سطام", "خليل", "ناصر", "ياسين", "طه", "ساهر", "جمال"];
         const fFirst = ["نورة", "سارة", "أمل", "مرام", "هيفاء", "ريم", "العنود", "ليلى", "نجلاء", "غادة", "رهف", "هند", "شروق", "نوف", "مشاعل", "أريج", "لطيفة", "موضي", "دلال", "منى", "خلود", "منيرة", "عبير", "أسماء", "فاطمة", "مريم", "عائشة", "تهاني", "نجود", "جواهر", "بدور", "شوق", "حصة", "سحر", "أحلام", "بشاير", "نادية", "مها", "رنا", "ليان", "جود", "تولين", "ديمة", "ريتاج", "كيان", "غنى", "وسن", "ليال", "جنى", "لينا"];
         const lNames = ["العتيبي", "القحطاني", "الزهراني", "الغامدي", "الحربي", "الشمري", "الدوسري", "المطيري", "الرشيدي", "السبيعي", "الشهري", "عسيري", "المالكي", "العنزي", "الرويلي", "الشهراني", "التميمي", "البقمي", "السهلي", "الخالدي", "الفضلي", "المرهون", "الحازمي", "القرني", "اليامي", "الثبيتي", "السلمي", "الجحدلي", "الصعيدي", "النفيعي", "الصلبي", "الشراري", "البلوي", "العمري", "الأسمري", "الاحمري", "الصبحي", "الذبياني", "اللحياني", "الحويطي", "الشرقي", "المري", "الهاجري", "السعدي", "المحيا", "العرفي", "الجهني", "البارقي", "الزامل", "العمودي", "النجار", "الحداد", "الصالح", "الفوزان", "الراشد", "السيف", "الجمعة", "الموسى", "الناصر", "السديري", "الزايد"];
 
-        // دالة توليد HTML لتقييم واحد (تُستدعى عند الحاجة فقط)
-        const createSingleReview = () => {
+        // دالة توليد تعليق عشوائي لحظي
+        const getSingleReviewHtml = () => {
             const isMale = Math.random() > 0.5;
-            const firstName = isMale ? mFirst[Math.floor(Math.random() * mFirst.length)] : fFirst[Math.floor(Math.random() * fFirst.length)];
-            const lastName = lNames[Math.floor(Math.random() * lNames.length)];
-            const fullName = `${firstName} ${lastName}`;
+            const fullName = `${isMale ? mFirst[Math.floor(Math.random() * mFirst.length)] : fFirst[Math.floor(Math.random() * fFirst.length)]} ${lNames[Math.floor(Math.random() * lNames.length)]}`;
             const avatar = isMale ? "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_male.png" : "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_female.png";
             
             const starts = ["ما شاء الله", "أطلق متجر", "والله انكم كفو", "افضل خدمة", "تجربة بطلة", "شغل مرتب", "ثقة وأمانة", "رهيبين", "انصحكم فيه", "خدمة احترافية"];
@@ -64,28 +64,27 @@
                 </div>`;
         };
 
-        // --- 3. دالة الحقن (تولد 5 فقط في كل استدعاء) ---
-        const renderNextBatch = () => {
-            let htmlBuffer = "";
+        // --- 4. دالة الحقن التدريجي ---
+        const loadMoreReviews = () => {
+            let htmlBatch = "";
             for (let i = 0; i < perPage; i++) {
                 if (currentIndex < totalReviewsCount) {
-                    htmlBuffer += createSingleReview();
+                    htmlBatch += getSingleReviewHtml();
                     currentIndex++;
                 }
             }
-            scrollContainer.insertAdjacentHTML('beforeend', htmlBuffer);
+            scrollContainer.insertAdjacentHTML('beforeend', htmlBatch);
 
-            // إخفاء الزر عند الوصول للحد الأقصى
             if (currentIndex >= totalReviewsCount) {
                 const wrapper = document.querySelector('.custom-load-more-wrapper');
                 if (wrapper) wrapper.style.display = 'none';
             }
         };
 
-        // حقن أول دفعة (5) عند تحميل الصفحة
-        renderNextBatch();
+        // حقن أول 5
+        loadMoreReviews();
 
-        // --- 4. إضافة زر "تحميل المزيد" ---
+        // --- 5. إضافة زر "تحميل المزيد" ---
         const btnWrapper = document.createElement('div');
         btnWrapper.className = "s-infinite-scroll-wrapper custom-load-more-wrapper";
         btnWrapper.innerHTML = `
@@ -105,23 +104,15 @@
             btnText.style.display = 'none';
             loader.style.display = 'inline-block';
 
-            // محاكاة وقت التحميل ليعطي انطباعاً بالواقعية
             setTimeout(() => {
-                renderNextBatch();
+                loadMoreReviews();
                 btnText.style.display = 'inline-block';
                 loader.style.display = 'none';
             }, 600);
         });
     };
 
-    // تشغيل السكربت
-    if (document.readyState === 'complete') {
-        injectReviews();
-    } else {
-        window.addEventListener('load', injectReviews);
-    }
-
-    // مراقبة الصفحة في حال كانت "سلة" تغير المحتوى ديناميكياً
+    window.addEventListener('load', injectReviews);
     const observer = new MutationObserver(injectReviews);
     observer.observe(document.body, { childList: true, subtree: true });
 })();
