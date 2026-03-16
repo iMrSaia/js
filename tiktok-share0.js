@@ -30,7 +30,7 @@
         const generateSmartComment = () => {
             const starts = ["بصراحة", "والله", "تجربة", "متجر", "خدمة", "أهنيكم", "ما شاء الله", "أطلق", "ثقة", "يا جماعة"];
             const middles = ["الاكسبلور وصل سريع", "الشيرات فورية ومضمونة", "الجودة ممتازة ومافي نقص", "أفضل متجر لرفع الحساب", "حركة الاكسبلور سريعة جدا", "انصحكم فيه بقوة", "سرعة البرق في التنفيذ", "ضمان حقيقي وتنفيذ فوري", "الخدمة ممتازة والسرعة عالية", "كل شي تمام والتنفيذ آلي"];
-            const ends = ["🔥", "✅", "✨", "👍", "🚀", ""]; 
+            const ends = ["", "", "", "", "", ""]; 
             return `${starts[Math.floor(Math.random() * starts.length)]} ${middles[Math.floor(Math.random() * middles.length)]} ${ends[Math.floor(Math.random() * ends.length)]}`;
         };
 
